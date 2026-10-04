@@ -1,4 +1,29 @@
+<<!DOCTYPE html>
+<html>
 <head>
     <title>HarvestAI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
+
+<body>
+
+    <h1>🌱 HarvestAI</h1>
+
+    <p>Your AI Farming Assistant</p>
+
+    <h2>Crop Disease Detection</h2>
+
+    <form>
+        <input type="file" accept="image/*">
+
+        <br><br>
+
+        <button type="submit">
+            Scan Crop
+        </button>
+    </form>
+
+</body>
+</html>
