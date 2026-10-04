@@ -3,26 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HarvestAI</title>
+
+    <title>HarvestAI - AI Farming Assistant</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f9f4;
+            color: #222;
+        }
+
+        header {
+            background: #176b35;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 32px;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 45px 20px;
+            background: white;
+        }
+
+        .hero h2 {
+            font-size: 28px;
+            color: #176b35;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: #555;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card .icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            color: #176b35;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .card button {
+            background: #176b35;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background: #0f4d25;
+        }
+
+        footer {
+            background: #176b35;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 26px;
+            }
+
+            .hero h2 {
+                font-size: 23px;
+            }
+
+            .features {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h1>🌾 Welcome to HarvestAI</h1>
-    <p>AI Farming Assistant</p>
 
-    <h2>Our Features</h2>
+    <header>
+        <h1>🌾 HarvestAI</h1>
+        <p>AI Farming Assistant</p>
+    </header>
 
-    <ul>
-        <li>🌿 Crop Disease Detection</li>
-        <li>🌦️ Weather Forecast</li>
-        <li>🌱 Crop Recommendation</li>
-        <li>🐛 Pest Identification</li>
-        <li>💰 Market Price Updates</li>
-        <li>🤖 AI Farming Chatbot</li>
-        <li>🍃 Leaf Doctor</li>
-        <li>📅 Crop Calendar</li>
-    </ul>
+    <section class="hero">
+        <h2>Smart Farming with Artificial Intelligence</h2>
+        <p>Helping farmers make better decisions with AI-powered tools.</p>
+    </section>
 
-    <p>Smart Farming with AI 🌾🤖</p>
+    <section class="features">
+
+        <div class="card">
+            <div class="icon">🌿</div>
+            <h3>Crop Disease Detection</h3>
+            <p>Upload a crop photo and identify possible diseases.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">🌦️</div>
+            <h3>Weather Forecast</h3>
+            <p>Check weather conditions and farming alerts.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">🌱</div>
+            <h3>Crop Recommendation</h3>
+            <p>Find suitable crops based on farming conditions.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">🐛</div>
+            <h3>Pest Identification</h3>
+            <p>Identify pests and learn prevention methods.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">💰</div>
+            <h3>Market Prices</h3>
+            <p>Check crop market prices and selling information.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">🤖</div>
+            <h3>AI Farming Chatbot</h3>
+            <p>Ask farming questions and get AI assistance.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">🍃</div>
+            <h3>Leaf Doctor</h3>
+            <p>Scan a leaf and get disease and treatment information.</p>
+            <button>Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">📅</div>
+            <h3>Crop Calendar</h3>
+            <p>Track important farming activities and reminders.</p>
+            <button>Open</button>
+        </div>
+
+    </section>
+
+    <footer>
+        <p>🌾 HarvestAI — Smart Farming with AI 🤖</p>
+    </footer>
+
 </body>
-</html>
+    </html>
