@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -11,6 +11,11 @@ def home():
 @app.route("/about")
 def about():
     return "HarvestAI - AI Farming Assistant"
+
+
+@app.route("/crop-disease")
+def crop_disease():
+    return render_template("crop_disease.html")
 
 
 if __name__ == "__main__":
