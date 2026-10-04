@@ -61,9 +61,11 @@
         <p>Upload a crop photo to check for possible diseases.</p>
 
         <form>
-            <input type="file" accept="image/*">
-            <br>
-            <button type="submit">🔍 Scan Crop</button>
+            <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="crop_image" accept="image/*" required>
+    <br>
+    <button type="submit">🔍 Scan Crop</button>
+            </form>
         </form>
 
         <a class="back" href="/">← Back to HarvestAI</a>
