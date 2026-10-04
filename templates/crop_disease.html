@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HarvestAI - Crop Disease Detection</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8e9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        h1 {
+            color: #2e7d32;
+        }
+
+        p {
+            color: #555;
+        }
+
+        input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+        }
+
+        button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1b5e20;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🌱 HarvestAI</h1>
+
+        <h2>Crop Disease Detection</h2>
+
+        <p>
+            Upload a crop or leaf photo to detect possible diseases.
+        </p>
+
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="image"
+                accept="image/*"
+                required
+            >
+
+            <br>
+
+            <button type="submit">
+                🔍 Scan Crop
+            </button>
+
+        </form>
+
+        {% if result %}
+        <div class="result">
+
+            <h3>Scan Result</h3>
+
+            <p>{{ result }}</p>
+
+        </div>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
