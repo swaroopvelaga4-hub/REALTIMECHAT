@@ -47,9 +47,11 @@ def predict():
 
     image.save(image_path)
 
-    return render_template(
-        "crop_disease.html",
-        result="Image uploaded successfully! AI disease detection will be connected next."
+return render_template(
+    "crop_disease.html",
+    result="Image uploaded successfully!",
+    image_url="/" + image_path
+)
     )
 
 
