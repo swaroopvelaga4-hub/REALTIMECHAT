@@ -50,7 +50,7 @@ def predict():
 return render_template(
     "crop_disease.html",
     result="Image uploaded successfully!",
-    image_url="/" + image_path
+  image_url="/static/uploads/" + image.filename
 )
     )
 
