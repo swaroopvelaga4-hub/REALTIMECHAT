@@ -30,7 +30,7 @@ def predict():
     if "image" not in request.files:
         return render_template(
             "crop_disease.html",
-            result="Please upload a crop image."
+            result="Please upload a crop or leaf image."
         )
 
     image = request.files["image"]
@@ -48,13 +48,22 @@ def predict():
 
     image.save(image_path)
 
+    # Temporary information
+    # Real AI detection will be connected later.
+
+    disease = "AI analysis will be added"
+    treatment = "Treatment information will appear after AI analysis."
+    fertilizer = "Fertilizer recommendation will appear after AI analysis."
+    fertilizer_quantity = "Quantity will appear after AI analysis."
+    prevention = "Prevention advice will appear after AI analysis."
+
     return render_template(
         "crop_disease.html",
-        result="Analysis completed!",
-        crop_name=crop_name,
+        result="Image uploaded successfully!",
         disease=disease,
         treatment=treatment,
         fertilizer=fertilizer,
+        fertilizer_quantity=fertilizer_quantity,
         prevention=prevention,
         image_url="/static/uploads/" + image.filename
     )
