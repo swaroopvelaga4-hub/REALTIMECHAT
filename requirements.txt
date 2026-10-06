@@ -3,4 +3,3 @@ gunicorn
 Pillow
 numpy
 requests
-mango-disease-ai
