@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HarvestAI - Crop Disease Detection</title>
+
+    <title>HarvestAI - Disease Doctor</title>
 
     <style>
         body {
@@ -14,57 +16,72 @@
         }
 
         .container {
-            max-width: 600px;
-            margin: 50px auto;
+            max-width: 650px;
+            margin: 40px auto;
             background: white;
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            text-align: center;
         }
 
         h1 {
+            text-align: center;
             color: #2e7d32;
         }
 
-        p {
+        h2 {
+            text-align: center;
+        }
+
+        .description {
+            text-align: center;
             color: #555;
         }
 
         input[type="file"] {
-            margin: 25px 0;
-            padding: 10px;
-            width: 90%;
+            width: 95%;
+            padding: 12px;
+            margin: 20px 0;
         }
 
         button {
+            width: 100%;
             background: #2e7d32;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 14px;
             border-radius: 8px;
+            font-size: 17px;
             cursor: pointer;
-            font-size: 16px;
         }
 
         button:hover {
             background: #1b5e20;
         }
 
-        .info {
+        .result {
             margin-top: 25px;
-            padding: 15px;
+            padding: 20px;
             background: #e8f5e9;
             border-radius: 10px;
-            text-align: left;
+        }
+
+        .result h3 {
+            color: #2e7d32;
+        }
+
+        .result p {
+            line-height: 1.6;
         }
 
         img {
-            margin-top: 15px;
-            border-radius: 10px;
+            display: block;
             max-width: 100%;
+            margin: 20px auto 0;
+            border-radius: 10px;
         }
     </style>
+
 </head>
 
 <body>
@@ -73,54 +90,68 @@
 
     <h1>🌱 HarvestAI</h1>
 
-    <h2>🔍 Crop Disease Detection</h2>
+    <h2>🌿 Disease Doctor</h2>
 
-    <p>Upload a crop or leaf photo to analyze.</p>
+    <p class="description">
+        Upload a crop or leaf photo for disease analysis.
+    </p>
 
     <form action="/predict" method="POST" enctype="multipart/form-data">
 
-        <input type="file" name="image" accept="image/*" required>
-
-        <br>
+        <input
+            type="file"
+            name="image"
+            accept="image/*"
+            required
+        >
 
         <button type="submit">
-            🔍 Analyze Crop
+            🔍 Analyze Leaf
         </button>
 
     </form>
 
-    <div class="info">
+    {% if result %}
 
-        <h3>🌿 AI Detection Result</h3>
+    <div class="result">
 
-       {% if result %}
-    <p><strong>{{ result }}</strong></p>
+        <h3>🩺 Disease Analysis</h3>
 
-    <hr>
+        <p>
+            🦠 <strong>Disease:</strong>
+            {{ disease }}
+        </p>
 
-    <p>🌱 <strong>Crop Name:</strong> {{ crop_name }}</p>
+        <p>
+            💊 <strong>Treatment:</strong>
+            {{ treatment }}
+        </p>
 
-    <p>🦠 <strong>Disease:</strong> {{ disease }}</p>
+        <p>
+            🧪 <strong>Fertilizer:</strong>
+            {{ fertilizer }}
+        </p>
 
-    <p>💊 <strong>Treatment:</strong> {{ treatment }}</p>
+        <p>
+            ⚖️ <strong>Recommended Quantity:</strong>
+            {{ fertilizer_quantity }}
+        </p>
 
-    <p>🧪 <strong>Fertilizer:</strong> {{ fertilizer }}</p>
-
-    <p>🛡️ <strong>Prevention:</strong> {{ prevention }}</p>
-
-{% else %}
-    <p>Crop Name: Waiting for image...</p>
-    <p>Disease: Waiting for analysis...</p>
-    <p>Treatment: Waiting for analysis...</p>
-{% endif %}
+        <p>
+            🛡️ <strong>Prevention:</strong>
+            {{ prevention }}
+        </p>
 
         {% if image_url %}
-            <img src="{{ image_url }}" alt="Uploaded Crop">
+            <img src="{{ image_url }}" alt="Uploaded Leaf">
         {% endif %}
 
     </div>
 
+    {% endif %}
+
 </div>
 
 </body>
+
 </html>
