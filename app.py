@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request
 import os
-from mango_disease_ai import analyze
-
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "static/uploads"
