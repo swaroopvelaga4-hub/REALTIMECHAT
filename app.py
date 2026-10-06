@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import os
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "static/uploads"
@@ -47,53 +48,16 @@ def predict():
 
     image.save(image_path)
 
-    try:
-        ai_result = analyze(image_path, include_gradcam=False)
-
-        if not ai_result["is_mango"]:
-            return render_template(
-                "crop_disease.html",
-                result="This image could not be confidently identified as a mango leaf."
-            )
-
-        disease = ai_result["predicted_class"]
-        confidence = round(ai_result["confidence"] * 100, 2)
-
-        disease_info = ai_result.get("disease_info") or {}
-
-        treatment = " ".join(
-            disease_info.get("remedies", [])
-        )
-
-        fertilizer = "Fertilizer recommendation will be added using verified agricultural guidance."
-
-        fertilizer_quantity = (
-            "Use fertilizer quantity only according to "
-            "soil test results and local agricultural recommendations."
-        )
-
-        prevention = " ".join(
-            disease_info.get("symptoms", [])
-        )
-
-        return render_template(
-            "crop_disease.html",
-            result="AI analysis completed!",
-            disease=f"{disease} ({confidence}% confidence)",
-            treatment=treatment,
-            fertilizer=fertilizer,
-            fertilizer_quantity=fertilizer_quantity,
-            prevention=prevention,
-            image_url="/static/uploads/" + image.filename
-        )
-
-    except Exception as e:
-        print("AI ERROR:", e)
-
-        return render_template(
-            "crop_disease.html",
-            result="AI analysis could not be completed. Please try again."
-        )
+    return render_template(
+        "crop_disease.html",
+        result="Image uploaded successfully!",
+        disease="AI disease detection will be connected next.",
+        treatment="Treatment information will appear after AI detection.",
+        fertilizer="Fertilizer recommendation will appear after AI detection.",
+        fertilizer_quantity="Quantity will appear after AI detection.",
+        prevention="Prevention advice will appear after AI detection.",
+        image_url="/static/uploads/" + image.filename
+    )
 
 
 if __name__ == "__main__":
