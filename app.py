@@ -48,13 +48,6 @@ def predict():
 
     image.save(image_path)
 
-    # Demo detection result
-    crop_name = "Tomato"
-    disease = "Leaf Spot"
-    treatment = "Remove infected leaves and maintain proper watering."
-    fertilizer = "Use a balanced fertilizer as recommended for tomato crops."
-    prevention = "Keep the field clean and avoid excess moisture on leaves."
-
     return render_template(
         "crop_disease.html",
         result="Analysis completed!",
