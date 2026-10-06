@@ -58,14 +58,15 @@ def predict():
     prevention = "Prevention advice will appear after AI analysis."
 
     return render_template(
-        "crop_disease.html",
-        result="Image uploaded successfully!",
-        disease=disease,
-        treatment=treatment,
-        fertilizer=fertilizer,
-        fertilizer_quantity=fertilizer_quantity,
-        prevention=prevention,
-        image_url="/static/uploads/" + image.filename
+    "crop_disease.html",
+    result="Image uploaded successfully!",
+    disease=disease,
+    treatment=treatment,
+    fertilizer=fertilizer,
+    fertilizer_quantity=fertilizer_quantity,
+    prevention=prevention,
+    image_url="/static/uploads/" + image.filename
+)
     )
 
 
