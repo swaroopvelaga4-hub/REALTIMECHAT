@@ -93,13 +93,26 @@
 
         <h3>🌿 AI Detection Result</h3>
 
-        {% if result %}
-            <p><strong>{{ result }}</strong></p>
-        {% else %}
-            <p>Crop Name: Waiting for image...</p>
-            <p>Disease: Waiting for analysis...</p>
-            <p>Treatment: Waiting for analysis...</p>
-        {% endif %}
+       {% if result %}
+    <p><strong>{{ result }}</strong></p>
+
+    <hr>
+
+    <p>🌱 <strong>Crop Name:</strong> {{ crop_name }}</p>
+
+    <p>🦠 <strong>Disease:</strong> {{ disease }}</p>
+
+    <p>💊 <strong>Treatment:</strong> {{ treatment }}</p>
+
+    <p>🧪 <strong>Fertilizer:</strong> {{ fertilizer }}</p>
+
+    <p>🛡️ <strong>Prevention:</strong> {{ prevention }}</p>
+
+{% else %}
+    <p>Crop Name: Waiting for image...</p>
+    <p>Disease: Waiting for analysis...</p>
+    <p>Treatment: Waiting for analysis...</p>
+{% endif %}
 
         {% if image_url %}
             <img src="{{ image_url }}" alt="Uploaded Crop">
