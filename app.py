@@ -49,6 +49,18 @@ def predict():
     )
 
     image.save(image_path)
+        headers = {
+        "Authorization": f"Bearer {HF_TOKEN}"
+    }
+
+    with open(image_path, "rb") as f:
+        response = requests.post(
+            MODEL_URL,
+            headers=headers,
+            data=f
+        )
+
+    predictions = response.json()
 
     return render_template(
         "crop_disease.html",
