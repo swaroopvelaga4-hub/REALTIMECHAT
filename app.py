@@ -51,6 +51,7 @@ def predict():
     return render_template(
         "crop_disease.html",
         result="Image uploaded successfully!",
+        crop_name="Crop identification will appear after AI detection.",
         disease="AI disease detection will be connected next.",
         treatment="Treatment information will appear after AI detection.",
         fertilizer="Fertilizer recommendation will appear after AI detection.",
