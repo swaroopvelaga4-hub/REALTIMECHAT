@@ -63,7 +63,8 @@ def predict():
             headers=headers,
             data=f
         )
-
+print("HF STATUS:", response.status_code)
+print("HF RESPONSE:", response.text)
     predictions = response.json()
 
     if isinstance(predictions, list) and len(predictions) > 0:
