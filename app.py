@@ -61,6 +61,17 @@ def predict():
         )
 
     predictions = response.json()
+    if isinstance(predictions, list) and len(predictions) > 0:
+
+        best_prediction = predictions[0]
+
+        label = best_prediction.get("label", "Unknown")
+        score = best_prediction.get("score", 0)
+
+        disease = f"{label} ({score * 100:.1f}% confidence)"
+
+    else:
+        disease = "Unable to identify the disease."
 
     return render_template(
         "crop_disease.html",
