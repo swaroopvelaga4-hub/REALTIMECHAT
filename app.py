@@ -28,7 +28,9 @@ def about():
 @app.route("/crop-disease")
 def crop_disease():
     return render_template("crop_disease.html")
-    @app.route("/weather")
+
+
+@app.route("/weather")
 def weather():
     return render_template("weather.html")
 
