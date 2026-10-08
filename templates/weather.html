@@ -106,83 +106,116 @@
 
             navigator.geolocation.getCurrentPosition(
 
-                function(position) {
+                async function(position) {
 
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
 
 
-                    result.innerHTML = `
-                        <div class="item">
-                            📍 Location: Detecting...
-                        </div>
+                    try {
 
-                        <div class="item">
-                            🌡️ Temperature: Checking...
-                        </div>
+                        // Get city and state from device coordinates
+                        const locationResponse = await fetch(
+                            `https://geocoding-api.open-meteo.com/v1/search?name=${latitude},${longitude}&count=1&language=en&format=json`
+                        );
 
-                        <div class="item">
-                            🌧️ Rainfall: Checking...
-                        </div>
+                        const locationData = await locationResponse.json();
 
-                        <div class="item">
-                            💧 Humidity: Checking...
-                        </div>
+                        let city = "Unknown";
+                        let state = "";
 
-                        <div class="item">
-                            💨 Wind: Checking...
-                        </div>
-
-                        <div class="item">
-                            ⚠️ Farming Alert: Checking...
-                        </div>
-                    `;
+                        if (
+                            locationData.results &&
+                            locationData.results.length > 0
+                        ) {
+                            city = locationData.results[0].name || "Unknown";
+                            state = locationData.results[0].admin1 || "";
+                        }
 
 
-                    /*
-                       Location detected successfully.
+                        const locationName = state
+                            ? `${city}, ${state}`
+                            : city;
 
-                       Latitude:
-                       ${latitude}
-
-                       Longitude:
-                       ${longitude}
-
-                       Real weather API will be connected next.
-                    */
-
-
-                    setTimeout(function() {
 
                         result.innerHTML = `
 
                             <div class="item">
-                                📍 Location: Location detected
+                                📍 Location: ${locationName}
                             </div>
 
                             <div class="item">
-                                🌡️ Temperature: 30°C
+                                🌡️ Temperature: Checking...
                             </div>
 
                             <div class="item">
-                                🌧️ Rainfall: Low
+                                🌧️ Rainfall: Checking...
                             </div>
 
                             <div class="item">
-                                💧 Humidity: 65%
+                                💧 Humidity: Checking...
                             </div>
 
                             <div class="item">
-                                💨 Wind: 12 km/h
+                                💨 Wind: Checking...
                             </div>
 
                             <div class="item">
-                                ⚠️ Farming Alert: No major alert
+                                ⚠️ Farming Alert: Checking...
                             </div>
 
                         `;
 
-                    }, 1000);
+
+                        // Temporary weather values
+                        setTimeout(function() {
+
+                            result.innerHTML = `
+
+                                <div class="item">
+                                    📍 Location: ${locationName}
+                                </div>
+
+                                <div class="item">
+                                    🌡️ Temperature: 30°C
+                                </div>
+
+                                <div class="item">
+                                    🌧️ Rainfall: Low
+                                </div>
+
+                                <div class="item">
+                                    💧 Humidity: 65%
+                                </div>
+
+                                <div class="item">
+                                    💨 Wind: 12 km/h
+                                </div>
+
+                                <div class="item">
+                                    ⚠️ Farming Alert: No major alert
+                                </div>
+
+                            `;
+
+                        }, 1000);
+
+
+                    } catch (error) {
+
+                        result.innerHTML = `
+
+                            <div class="error">
+                                ❌ Unable to find your city name.
+                            </div>
+
+                            <div class="item">
+                                Please try again.
+                            </div>
+
+                        `;
+
+                    }
 
                 },
 
