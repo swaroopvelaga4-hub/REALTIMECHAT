@@ -114,26 +114,43 @@
 
                     try {
 
-                        // Get city and state from device coordinates
+                        /*
+                         * Get City + State
+                         * using device latitude and longitude
+                         */
+
                         const locationResponse = await fetch(
-                            `https://geocoding-api.open-meteo.com/v1/search?name=${latitude},${longitude}&count=1&language=en&format=json`
+                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+                            {
+                                headers: {
+                                    "Accept": "application/json"
+                                }
+                            }
                         );
 
-                        const locationData = await locationResponse.json();
 
-                        let city = "Unknown";
-                        let state = "";
-
-                        if (
-                            locationData.results &&
-                            locationData.results.length > 0
-                        ) {
-                            city = locationData.results[0].name || "Unknown";
-                            state = locationData.results[0].admin1 || "";
-                        }
+                        const locationData =
+                            await locationResponse.json();
 
 
-                        const locationName = state
+                        const address =
+                            locationData.address || {};
+
+
+                        const city =
+                            address.city ||
+                            address.town ||
+                            address.village ||
+                            address.municipality ||
+                            "Unknown";
+
+
+                        const state =
+                            address.state || "";
+
+
+                        const locationName =
+                            state
                             ? `${city}, ${state}`
                             : city;
 
@@ -167,7 +184,11 @@
                         `;
 
 
-                        // Temporary weather values
+                        /*
+                         * Temporary weather values
+                         * Real weather will be connected next.
+                         */
+
                         setTimeout(function() {
 
                             result.innerHTML = `
@@ -202,6 +223,8 @@
 
 
                     } catch (error) {
+
+                        console.log("Location Error:", error);
 
                         result.innerHTML = `
 
