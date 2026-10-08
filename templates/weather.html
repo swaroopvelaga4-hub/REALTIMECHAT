@@ -1,1 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HarvestAI - Weather Forecast</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .weather-box {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #168aad;
+        }
+
+        .item {
+            font-size: 18px;
+            margin: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #168aad;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="weather-box">
+
+        <h1>🌦️ Weather Forecast</h1>
+
+        <p>Check weather conditions and farming alerts.</p>
+
+        <button onclick="getWeather()">
+            📍 Check Weather
+        </button>
+
+        <div id="weatherResult">
+
+            <div class="item">🌡️ Temperature: --</div>
+            <div class="item">🌧️ Rainfall: --</div>
+            <div class="item">💧 Humidity: --</div>
+            <div class="item">💨 Wind: --</div>
+            <div class="item">⚠️ Farming Alert: --</div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function getWeather() {
+
+            document.getElementById("weatherResult").innerHTML = `
+                <div class="item">🌡️ Temperature: Checking...</div>
+                <div class="item">🌧️ Rainfall: Checking...</div>
+                <div class="item">💧 Humidity: Checking...</div>
+                <div class="item">💨 Wind: Checking...</div>
+                <div class="item">⚠️ Farming Alert: Checking...</div>
+            `;
+
+            setTimeout(function() {
+
+                document.getElementById("weatherResult").innerHTML = `
+                    <div class="item">🌡️ Temperature: 30°C</div>
+                    <div class="item">🌧️ Rainfall: Low</div>
+                    <div class="item">💧 Humidity: 65%</div>
+                    <div class="item">💨 Wind: 12 km/h</div>
+                    <div class="item">⚠️ Farming Alert: No major alert</div>
+                `;
+
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>
