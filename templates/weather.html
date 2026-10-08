@@ -138,11 +138,15 @@
 
 
                         const city =
-                            address.city ||
-                            address.town ||
-                            address.village ||
-                            address.municipality ||
-                            "Unknown";
+                          const city =
+    address.city ||
+    address.town ||
+    address.village ||
+    address.municipality ||
+    address.county ||
+    address.suburb ||
+    address.city_district ||
+    "Unknown";
 
 
                         const state =
