@@ -38,6 +38,15 @@
             font-size: 16px;
             cursor: pointer;
         }
+
+        button:hover {
+            background: #0b6e8a;
+        }
+
+        .error {
+            color: red;
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -55,6 +64,7 @@
 
         <div id="weatherResult">
 
+            <div class="item">📍 Location: --</div>
             <div class="item">🌡️ Temperature: --</div>
             <div class="item">🌧️ Rainfall: --</div>
             <div class="item">💧 Humidity: --</div>
@@ -65,10 +75,15 @@
 
     </div>
 
+
     <script>
+
         function getWeather() {
 
-            document.getElementById("weatherResult").innerHTML = `
+            const result = document.getElementById("weatherResult");
+
+            result.innerHTML = `
+                <div class="item">📍 Getting your location...</div>
                 <div class="item">🌡️ Temperature: Checking...</div>
                 <div class="item">🌧️ Rainfall: Checking...</div>
                 <div class="item">💧 Humidity: Checking...</div>
@@ -76,18 +91,123 @@
                 <div class="item">⚠️ Farming Alert: Checking...</div>
             `;
 
-            setTimeout(function() {
 
-                document.getElementById("weatherResult").innerHTML = `
-                    <div class="item">🌡️ Temperature: 30°C</div>
-                    <div class="item">🌧️ Rainfall: Low</div>
-                    <div class="item">💧 Humidity: 65%</div>
-                    <div class="item">💨 Wind: 12 km/h</div>
-                    <div class="item">⚠️ Farming Alert: No major alert</div>
+            if (!navigator.geolocation) {
+
+                result.innerHTML = `
+                    <div class="error">
+                        ❌ Location is not supported by this browser.
+                    </div>
                 `;
 
-            }, 1000);
+                return;
+            }
+
+
+            navigator.geolocation.getCurrentPosition(
+
+                function(position) {
+
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+
+                    result.innerHTML = `
+                        <div class="item">
+                            📍 Location: Detecting...
+                        </div>
+
+                        <div class="item">
+                            🌡️ Temperature: Checking...
+                        </div>
+
+                        <div class="item">
+                            🌧️ Rainfall: Checking...
+                        </div>
+
+                        <div class="item">
+                            💧 Humidity: Checking...
+                        </div>
+
+                        <div class="item">
+                            💨 Wind: Checking...
+                        </div>
+
+                        <div class="item">
+                            ⚠️ Farming Alert: Checking...
+                        </div>
+                    `;
+
+
+                    /*
+                       Location detected successfully.
+
+                       Latitude:
+                       ${latitude}
+
+                       Longitude:
+                       ${longitude}
+
+                       Real weather API will be connected next.
+                    */
+
+
+                    setTimeout(function() {
+
+                        result.innerHTML = `
+
+                            <div class="item">
+                                📍 Location: Location detected
+                            </div>
+
+                            <div class="item">
+                                🌡️ Temperature: 30°C
+                            </div>
+
+                            <div class="item">
+                                🌧️ Rainfall: Low
+                            </div>
+
+                            <div class="item">
+                                💧 Humidity: 65%
+                            </div>
+
+                            <div class="item">
+                                💨 Wind: 12 km/h
+                            </div>
+
+                            <div class="item">
+                                ⚠️ Farming Alert: No major alert
+                            </div>
+
+                        `;
+
+                    }, 1000);
+
+                },
+
+
+                function(error) {
+
+                    result.innerHTML = `
+
+                        <div class="error">
+                            ❌ Unable to get your location.
+                        </div>
+
+                        <div class="item">
+                            Please allow location permission
+                            and try again.
+                        </div>
+
+                    `;
+
+                }
+
+            );
+
         }
+
     </script>
 
 </body>
