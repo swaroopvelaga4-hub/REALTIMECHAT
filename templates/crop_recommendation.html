@@ -1,5 +1,157 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HarvestAI - Crop Recommendation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8f1;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #176b35;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 450px;
+            background: white;
+            margin: 30px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #ccc;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background: #176b35;
+            color: white;
+            cursor: pointer;
+            border: none;
+            margin-top: 22px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 12px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+        }
+
+        a {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🌱 Crop Recommendation</h1>
+        <p>HarvestAI Farming Assistant</p>
+        <a href="/">← Back to Home</a>
+    </header>
+
+    <div class="container">
+        <h2>Select Farming Conditions</h2>
+
+        <label for="district">District</label>
+        <select id="district">
+            <option value="">Select District</option>
+            <option>East Godavari</option>
+            <option>West Godavari</option>
+            <option>Krishna</option>
+            <option>Guntur</option>
+            <option>NTR</option>
+            <option>Eluru</option>
+            <option>Other</option>
+        </select>
+
+        <label for="soil">Soil Type</label>
+        <select id="soil">
+            <option value="">Select Soil</option>
+            <option value="black">Black Soil</option>
+            <option value="red">Red Soil</option>
+            <option value="sandy">Sandy Soil</option>
+            <option value="loamy">Loamy Soil</option>
+        </select>
+
+        <label for="season">Season</label>
+        <select id="season">
+            <option value="">Select Season</option>
+            <option value="kharif">Kharif (Rainy)</option>
+            <option value="rabi">Rabi (Winter)</option>
+            <option value="summer">Summer</option>
+        </select>
+
+        <button type="button" onclick="recommendCrop()">Recommend Crops</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function recommendCrop() {
+            const soil = document.getElementById("soil").value;
+            const season = document.getElementById("season").value;
+            const district = document.getElementById("district").value;
+            const result = document.getElementById("result");
+
+            if (!district || !soil || !season) {
+                result.style.display = "block";
+                result.innerHTML = "Please select district, soil type, and season.";
+                return;
+            }
+
+            let crops = [];
+
+            if (soil === "black") {
+                crops = ["Cotton", "Pulses", "Sorghum"];
+            } else if (soil === "red") {
+                crops = ["Groundnut", "Millets", "Pulses"];
+            } else if (soil === "sandy") {
+                crops = ["Groundnut", "Watermelon", "Millets"];
+            } else {
+                crops = ["Rice", "Maize", "Vegetables"];
+            }
+
+            if (season === "kharif") {
+                crops.push("Seasonal pulses");
+            } else if (season === "rabi") {
+                crops.push("Chickpea");
+            } else {
+                crops.push("Summer vegetables (where water is available)");
+            }
+
+            result.style.display = "block";
+            result.innerHTML =
+                "<h3>🌾 Suggested Crops</h3>" +
+                "<p><b>District:</b> " + district + "</p>" +
+                "<p><b>Possible crops:</b> " + crops.join(", ") + "</p>" +
+                "<p>These are general suggestions. Confirm suitability with local agricultural experts and current water conditions before planting.</p>";
+        }
+    </script>
+</body>
+</html>
 ```
