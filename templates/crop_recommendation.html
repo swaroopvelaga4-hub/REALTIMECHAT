@@ -1,86 +1,92 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HarvestAI - Crop Recommendation</title>
-
+    <title>HarvestAI - Soil & Crop AI</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f1f8f1;
             margin: 0;
-            padding: 0;
+            color: #222;
         }
-
         header {
             background: #176b35;
             color: white;
             text-align: center;
             padding: 20px;
         }
-
         .container {
-            max-width: 450px;
+            max-width: 500px;
+            margin: 25px auto;
+            padding: 22px;
             background: white;
-            margin: 30px auto;
-            padding: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 12px #ccc;
         }
-
         label {
             display: block;
             margin-top: 15px;
             font-weight: bold;
         }
-
-        select, button {
+        input, select, button {
             width: 100%;
             padding: 12px;
             margin-top: 8px;
-            border-radius: 6px;
+            box-sizing: border-box;
             border: 1px solid #ccc;
+            border-radius: 6px;
             font-size: 16px;
         }
-
         button {
             background: #176b35;
             color: white;
-            cursor: pointer;
             border: none;
-            margin-top: 22px;
-        }
-
-        #result {
+            cursor: pointer;
             margin-top: 20px;
-            padding: 12px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
             background: #e8f5e9;
             border-radius: 8px;
-            display: none;
+            overflow-wrap: anywhere;
         }
-
-        a {
-            color: white;
+        .error {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 8px;
         }
+        a { color: white; }
     </style>
 </head>
-
 <body>
-    <header>
-        <h1>🌱 Crop Recommendation</h1>
-        <p>HarvestAI Farming Assistant</p>
-        <a href="/">← Back to Home</a>
-    </header>
+<header>
+    <h1>🌱 HarvestAI Soil Doctor</h1>
+    <p>Upload Soil Photo & Get Crop Suggestions</p>
+    <a href="/">← Back to Home</a>
+</header>
 
-    <div class="container">
-        <h2>Select Farming Conditions</h2>
+<div class="container">
+    <h2>📸 Soil Detection</h2>
+    <p>Take a clear photo of dry soil in natural light.</p>
+
+    <form action="/soil-detect" method="POST"
+          enctype="multipart/form-data">
+
+        <label for="photo">Upload Soil Photo</label>
+        <input type="file" id="photo" name="soil_image"
+               accept="image/*" capture="environment" required>
 
         <label for="district">District</label>
-        <select id="district">
+        <select id="district" name="district" required>
             <option value="">Select District</option>
             <option>East Godavari</option>
             <option>West Godavari</option>
+            <option>Konaseema</option>
+            <option>Kakinada</option>
             <option>Krishna</option>
             <option>Guntur</option>
             <option>NTR</option>
@@ -88,68 +94,30 @@
             <option>Other</option>
         </select>
 
-        <label for="soil">Soil Type</label>
-        <select id="soil">
-            <option value="">Select Soil</option>
-            <option value="black">Black Soil</option>
-            <option value="red">Red Soil</option>
-            <option value="sandy">Sandy Soil</option>
-            <option value="loamy">Loamy Soil</option>
-        </select>
+        <button type="submit">🔍 Detect Soil & Recommend Crops</button>
+    </form>
 
-        <label for="season">Season</label>
-        <select id="season">
-            <option value="">Select Season</option>
-            <option value="kharif">Kharif (Rainy)</option>
-            <option value="rabi">Rabi (Winter)</option>
-            <option value="summer">Summer</option>
-        </select>
-
-        <button type="button" onclick="recommendCrop()">Recommend Crops</button>
-
-        <div id="result"></div>
+    {% if error %}
+    <div class="error">
+        <h3>⚠️ Notice</h3>
+        <p>{{ error }}</p>
     </div>
+    {% endif %}
 
-    <script>
-        function recommendCrop() {
-            const soil = document.getElementById("soil").value;
-            const season = document.getElementById("season").value;
-            const district = document.getElementById("district").value;
-            const result = document.getElementById("result");
-
-            if (!district || !soil || !season) {
-                result.style.display = "block";
-                result.innerHTML = "Please select district, soil type, and season.";
-                return;
-            }
-
-            let crops = [];
-
-            if (soil === "black") {
-                crops = ["Cotton", "Pulses", "Sorghum"];
-            } else if (soil === "red") {
-                crops = ["Groundnut", "Millets", "Pulses"];
-            } else if (soil === "sandy") {
-                crops = ["Groundnut", "Watermelon", "Millets"];
-            } else {
-                crops = ["Rice", "Maize", "Vegetables"];
-            }
-
-            if (season === "kharif") {
-                crops.push("Seasonal pulses");
-            } else if (season === "rabi") {
-                crops.push("Chickpea");
-            } else {
-                crops.push("Summer vegetables (where water is available)");
-            }
-
-            result.style.display = "block";
-            result.innerHTML =
-                "<h3>🌾 Suggested Crops</h3>" +
-                "<p><b>District:</b> " + district + "</p>" +
-                "<p><b>Possible crops:</b> " + crops.join(", ") + "</p>" +
-                "<p>These are general suggestions. Confirm suitability with local agricultural experts and current water conditions before planting.</p>";
-        }
-    </script>
+    {% if soil_type %}
+    <div class="result">
+        <h2>🌾 Analysis Result</h2>
+        <p><b>Estimated Soil Type:</b> {{ soil_type }}</p>
+        <p><b>Model Confidence:</b> {{ confidence }}%</p>
+        <p><b>District:</b> {{ district }}</p>
+        <p><b>Suggested Season:</b> {{ season }}</p>
+        <p><b>Possible Crops:</b> {{ crops | join(', ') }}</p>
+        <p><b>Important:</b> These are preliminary suggestions.
+        Confirm soil properties and crop suitability with a soil test
+        and local agricultural expert before planting.</p>
+    </div>
+    {% endif %}
+</div>
 </body>
 </html>
+```
