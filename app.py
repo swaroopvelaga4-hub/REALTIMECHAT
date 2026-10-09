@@ -4,11 +4,10 @@ import requests
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-```python
 @app.route("/crop-recommendation")
 def crop_recommendation():
     return render_template("crop_recommendation.html")
-```
+
 
 
 HF_TOKEN = os.environ.get("HF_TOKEN")
