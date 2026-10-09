@@ -1,4 +1,3 @@
-```python
 from flask import Flask, render_template, request
 import os
 import requests
@@ -339,4 +338,4 @@ def soil_detect():
 
 if __name__ == "__main__":
     app.run(debug=True)
-```
+
