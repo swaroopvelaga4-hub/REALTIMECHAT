@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HarvestAI - Soil Doctor</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8f1;
+            margin: 0;
+            color: #222;
+        }
+
+        header {
+            background: #176b35;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 25px auto;
+            padding: 22px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #ccc;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #176b35;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #105327;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 12px;
+            background: #fff3e0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌱 HarvestAI Soil Doctor</h1>
+    <p>Soil Information & Crop Recommendations</p>
+    <a href="/">← Back to Home</a>
+</header>
+
+<div class="container">
+
+    <h2>📸 Soil Detection</h2>
+
+    <p>Upload a clear soil photo in natural light.</p>
+
+    <form action="/soil-detect"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <label for="photo">Upload Soil Photo</label>
+
+        <input type="file"
+               id="photo"
+               name="soil_image"
+               accept="image/*"
+               capture="environment"
+               required>
+
+        <label for="district">District</label>
+
+        <select id="district" name="district" required>
+            <option value="">Select District</option>
+            <option>East Godavari</option>
+            <option>West Godavari</option>
+            <option>Konaseema</option>
+            <option>Kakinada</option>
+            <option>Krishna</option>
+            <option>Guntur</option>
+            <option>NTR</option>
+            <option>Eluru</option>
+            <option>Other</option>
+        </select>
+
+        <button type="submit">
+            🔍 Analyze Soil
+        </button>
+
+    </form>
+
+    {% if error %}
+    <div class="error">
+        <h3>⚠️ Notice</h3>
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if soil_type %}
+    <div class="result">
+
+        <h2>🌾 Analysis Result</h2>
+
+        <p>
+            <b>Estimated Soil Type:</b>
+            {{ soil_type }}
+        </p>
+
+        <p>
+            <b>Model Confidence:</b>
+            {{ confidence }}%
+        </p>
+
+        <p>
+            <b>District:</b>
+            {{ district }}
+        </p>
+
+        <p>
+            <b>Suggested Season:</b>
+            {{ season }}
+        </p>
+
+        <p>
+            <b>Possible Crops:</b>
+            {{ crops | join(', ') }}
+        </p>
+
+        <p>
+            <b>Important:</b>
+            Photo-based estimates may be inaccurate.
+            Confirm soil properties with a soil test
+            and a local agricultural expert before planting.
+        </p>
+
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
