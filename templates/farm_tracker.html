@@ -1,0 +1,211 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Expense & Profit Tracker - HarvestAI</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f8f0;
+            color: #23452b;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 14px #00000015;
+        }
+
+        h1 {
+            text-align: center;
+            color: #218838;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 8px;
+            background: #218838;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .result {
+            display: none;
+            margin-top: 22px;
+            padding: 18px;
+            background: #e7f5e8;
+            border-radius: 10px;
+            line-height: 1.9;
+        }
+
+        .back {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #218838;
+            text-decoration: none;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #555;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>💰 Farm Expense & Profit Tracker</h1>
+        <p>Enter your farming expenses and income to calculate your result.</p>
+
+        <form id="farmForm">
+            <label for="crop">Crop Name</label>
+            <select id="crop" required>
+                <option value="">Select Crop</option>
+                <option>Rice / Paddy</option>
+                <option>Maize</option>
+                <option>Cotton</option>
+                <option>Chilli</option>
+                <option>Groundnut</option>
+                <option>Tomato</option>
+                <option>Other</option>
+            </select>
+
+            <label for="area">Land Area (acres)</label>
+            <input id="area" type="number" min="0.01"
+                   step="0.01" placeholder="Example: 2" required>
+
+            <label for="seeds">Seeds Cost (₹)</label>
+            <input id="seeds" type="number" min="0" step="0.01"
+                   placeholder="Enter amount" required>
+
+            <label for="fertilizer">Fertilizer Cost (₹)</label>
+            <input id="fertilizer" type="number" min="0" step="0.01"
+                   placeholder="Enter amount" required>
+
+            <label for="labour">Labour Cost (₹)</label>
+            <input id="labour" type="number" min="0" step="0.01"
+                   placeholder="Enter amount" required>
+
+            <label for="water">Water / Electricity Cost (₹)</label>
+            <input id="water" type="number" min="0" step="0.01"
+                   placeholder="Enter amount" required>
+
+            <label for="other">Other Expenses (₹)</label>
+            <input id="other" type="number" min="0" step="0.01"
+                   placeholder="Enter amount" required>
+
+            <label for="income">Total Crop Sale Income (₹)</label>
+            <input id="income" type="number" min="0" step="0.01"
+                   placeholder="Enter total income" required>
+
+            <button type="submit">Calculate Profit / Loss</button>
+        </form>
+
+        <div class="result" id="result" aria-live="polite">
+            <h2>📊 Farming Report</h2>
+            <p id="report"></p>
+        </div>
+
+        <p class="note">
+            Note: This calculator uses the amounts you enter.
+            Results are estimates and do not include expenses you leave out.
+            Your entries are not saved permanently.
+        </p>
+
+        <a class="back" href="/">← Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById("farmForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const crop = document.getElementById("crop").value;
+            const area = Number(document.getElementById("area").value);
+
+            const fields = ["seeds", "fertilizer", "labour", "water", "other", "income"];
+            const values = {};
+
+            for (const field of fields) {
+                const input = document.getElementById(field);
+                values[field] = Number(input.value);
+
+                if (input.value.trim() === "" ||
+                    !Number.isFinite(values[field]) ||
+                    values[field] < 0) {
+                    alert("Please enter valid amounts. Expenses and income cannot be negative.");
+                    input.focus();
+                    return;
+                }
+            }
+
+            if (!Number.isFinite(area) || area <= 0 || !crop) {
+                alert("Please select a crop and enter a valid land area.");
+                return;
+            }
+
+            const expenses =
+                values.seeds +
+                values.fertilizer +
+                values.labour +
+                values.water +
+                values.other;
+
+            const profit = values.income - expenses;
+            const money = amount => "₹" + amount.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            let status;
+            if (profit > 0) {
+                status = "Profit: " + money(profit);
+            } else if (profit < 0) {
+                status = "Loss: " + money(Math.abs(profit));
+            } else {
+                status = "Break-even: No profit or loss";
+            }
+
+            document.getElementById("report").innerHTML =
+                "<strong>Crop:</strong> " + crop +
+                "<br><strong>Land Area:</strong> " + area + " acres" +
+                "<br><strong>Total Expenses:</strong> " + money(expenses) +
+                "<br><strong>Total Income:</strong> " + money(values.income) +
+                "<br><strong>Result:</strong> " + status +
+                "<br><strong>Expense per Acre:</strong> " + money(expenses / area);
+
+            document.getElementById("result").style.display = "block";
+        });
+    </script>
+</body>
+</html>
+```
