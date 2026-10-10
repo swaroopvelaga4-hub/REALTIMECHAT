@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HarvestAI - Market Prices</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8f1;
+            margin: 0;
+            color: #222;
+        }
+
+        header {
+            background: #176b35;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header a {
+            color: white;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 25px auto;
+            padding: 22px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #ccc;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #176b35;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .notice, .result-card {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .notice {
+            background: #fff3e0;
+        }
+
+        .result-card {
+            background: #eaf7ec;
+            border: 1px solid #b6dfbd;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #eaf7ec;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>💰 HarvestAI Market Prices</h1>
+    <p>Check agricultural market prices</p>
+    <a href="/">← Back to Home</a>
+</header>
+
+<div class="container">
+
+    <h2>🌾 Find Crop Prices</h2>
+    <p>Select your crop and location to find available market price information.</p>
+
+    <form action="/market-prices" method="POST">
+
+        <label for="crop">Select Crop</label>
+        <select id="crop" name="crop" required>
+            <option value="">Choose crop</option>
+            <option value="Rice">Rice (Paddy)</option>
+            <option value="Maize">Maize</option>
+            <option value="Cotton">Cotton</option>
+            <option value="Chilli">Chilli</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Groundnut">Groundnut</option>
+            <option value="Turmeric">Turmeric</option>
+            <option value="Onion">Onion</option>
+        </select>
+
+        <label for="state">State</label>
+        <select id="state" name="state" required>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Maharashtra">Maharashtra</option>
+        </select>
+
+        <label for="district">District</label>
+        <input
+            type="text"
+            id="district"
+            name="district"
+            placeholder="Example: East Godavari"
+            required
+        >
+
+        <label for="market">Market / Mandi (optional)</label>
+        <input
+            type="text"
+            id="market"
+            name="market"
+            placeholder="Enter market name if known"
+        >
+
+        <button type="submit">🔍 Find Market Prices</button>
+    </form>
+
+    {% if error %}
+    <div class="notice" role="status">
+        <strong>Notice:</strong>
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if prices %}
+    <div class="result-card">
+        <h2>📊 Market Price Results</h2>
+        <p>Crop: {{ selected_crop }}</p>
+        <p>Location: {{ selected_district }}, {{ selected_state }}</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Market</th>
+                        <th>Minimum (₹/quintal)</th>
+                        <th>Maximum (₹/quintal)</th>
+                        <th>Modal (₹/quintal)</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in prices %}
+                    <tr>
+                        <td>{{ item.market }}</td>
+                        <td>{{ item.min_price }}</td>
+                        <td>{{ item.max_price }}</td>
+                        <td>{{ item.modal_price }}</td>
+                        <td>{{ item.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="notice">
+        <strong>ℹ️ Important</strong>
+        <p>Market prices change daily and vary by crop variety, quality and market.</p>
+        <p>Use verified government market data before making selling decisions.</p>
+        <a href="https://www.data.gov.in/" target="_blank" rel="noopener">
+            Visit Government Open Data Portal
+        </a>
+    </div>
+
+</div>
+
+<footer>
+    🌾 HarvestAI — Smart Farming with AI
+</footer>
+
+</body>
+</html>
