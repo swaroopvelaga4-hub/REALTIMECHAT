@@ -121,6 +121,7 @@ def predict():
             )
 
         if response.status_code != 200:
+            print("DISEASE MODEL STATUS:", response.status_code)
             return render_template(
                 "crop_disease.html",
                 result="AI model unavailable. Please try again later.",
@@ -240,7 +241,7 @@ def pest_identify():
     image_path = os.path.join(UPLOAD_FOLDER, filename)
     pest_image.save(image_path)
 
-    # Actual pest AI model is not connected yet.
+    # Pest AI model is not connected yet.
     return render_template(
         "pest_identification.html",
         error=(
@@ -376,6 +377,39 @@ def soil_detect():
             "soil_detection.html",
             error="Soil analysis failed. Please try another clear photo."
         )
+
+
+# ---------------- MARKET PRICES ----------------
+
+@app.route("/market-prices", methods=["GET", "POST"])
+def market_prices():
+    if request.method == "POST":
+        crop = request.form.get("crop", "").strip()
+        state = request.form.get("state", "").strip()
+        district = request.form.get("district", "").strip()
+        market = request.form.get("market", "").strip()
+
+        if not crop or not state or not district:
+            return render_template(
+                "market_prices.html",
+                error="Please select a crop, state, and district."
+            )
+
+        # Live market data source is not connected yet.
+        return render_template(
+            "market_prices.html",
+            error=(
+                "Live market prices are not connected yet. "
+                "No current prices are available to display. "
+                "A verified market data source is required."
+            ),
+            selected_crop=crop,
+            selected_state=state,
+            selected_district=district,
+            selected_market=market
+        )
+
+    return render_template("market_prices.html")
 
 
 # ---------------- ERROR HANDLERS ----------------
