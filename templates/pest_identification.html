@@ -26,7 +26,7 @@
         }
 
         .container {
-            max-width: 500px;
+            max-width: 550px;
             margin: 25px auto;
             padding: 22px;
             background: white;
@@ -55,15 +55,59 @@
             color: white;
             border: none;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 18px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .voice-button {
+            background: #075985;
+        }
+
+        .stop-button {
+            background: #555;
+        }
+
+        .message, .result-card {
+            padding: 14px;
+            margin-top: 18px;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
         }
 
         .message {
-            padding: 12px;
-            margin-top: 15px;
             background: #fff3e0;
+        }
+
+        .result-card {
+            background: #eaf7ec;
+            border: 1px solid #b6dfbd;
+        }
+
+        .result-card h2 {
+            color: #176b35;
+        }
+
+        .notice {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .result-card p {
+            line-height: 1.6;
+        }
+
+        #photoPreview {
+            display: none;
+            width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            margin-top: 12px;
             border-radius: 8px;
-            overflow-wrap: anywhere;
         }
     </style>
 </head>
@@ -77,7 +121,7 @@
 
 <div class="container">
     <h2>📸 Upload Pest Photo</h2>
-    <p>Take a clear photo of the insect on your crop.</p>
+    <p>Upload a clear photo of the insect or affected crop.</p>
 
     <form action="/pest-identify"
           method="POST"
@@ -91,7 +135,9 @@
                capture="environment"
                required>
 
-        <label for="crop">Crop</label>
+        <img id="photoPreview" alt="Selected pest photo preview">
+
+        <label for="crop">Select Crop</label>
         <select id="crop" name="crop" required>
             <option value="">Select Crop</option>
             <option value="Rice">Rice</option>
@@ -114,15 +160,132 @@
     {% endif %}
 
     {% if pest_name %}
-    <div class="message">
-        <h2>🐛 Analysis Result</h2>
-        <p><b>Possible Pest:</b> {{ pest_name }}</p>
-        <p><b>Confidence:</b> {{ confidence }}%</p>
-        <p><b>Crop:</b> {{ crop }}</p>
-        <p><b>Advice:</b> {{ advice }}</p>
-        <p>Confirm the pest identification with a local agricultural expert before using any pesticide.</p>
+    <div class="result-card" id="pestResult">
+        <h2>🐛 Pest Analysis Result</h2>
+
+        <p><b>Possible Pest:</b>
+            <span id="pestName">{{ pest_name }}</span>
+        </p>
+
+        <p><b>Confidence:</b>
+            <span id="confidence">{{ confidence }}</span>%
+        </p>
+
+        <p><b>Crop:</b>
+            <span id="cropName">{{ crop }}</span>
+        </p>
+
+        <h3>🌿 Recommended Next Steps</h3>
+        <p id="pestAdvice">{{ advice }}</p>
+
+        <p class="notice">
+            Pest identification may be incorrect. Check the result with
+            a local agriculture officer before deciding on treatment.
+            Do not use a pesticide unless it is officially approved
+            for the identified crop and pest.
+        </p>
+
+        <button type="button"
+                class="voice-button"
+                onclick="speakAdvice()">
+            🔊 Listen in Telugu
+        </button>
+
+        <button type="button"
+                class="stop-button"
+                onclick="stopVoice()">
+            ⏹ Stop Voice
+        </button>
+
+        <p class="notice" id="voiceStatus" aria-live="polite">
+            Press "Listen in Telugu" to hear the explanation.
+        </p>
     </div>
     {% endif %}
 </div>
+
+<script>
+    // Show a preview of the selected photo.
+    const photoInput = document.getElementById("pest_image");
+    const photoPreview = document.getElementById("photoPreview");
+
+    photoInput.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file && file.type.startsWith("image/")) {
+            photoPreview.src = URL.createObjectURL(file);
+            photoPreview.style.display = "block";
+        } else {
+            photoPreview.removeAttribute("src");
+            photoPreview.style.display = "none";
+        }
+    });
+
+    // Read the actual result returned by the Python backend.
+    function speakAdvice() {
+        const status = document.getElementById("voiceStatus");
+        const pestElement = document.getElementById("pestName");
+        const cropElement = document.getElementById("cropName");
+        const adviceElement = document.getElementById("pestAdvice");
+
+        if (!("speechSynthesis" in window)) {
+            status.textContent =
+                "Voice is not supported in this browser. Please try another browser.";
+            return;
+        }
+
+        if (!pestElement || !cropElement || !adviceElement) {
+            status.textContent =
+                "First identify a pest to receive the voice explanation.";
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        const pest = pestElement.textContent.trim();
+        const crop = cropElement.textContent.trim();
+        const advice = adviceElement.textContent.trim();
+
+        const message =
+            "రైతు సోదరులకు నమస్కారం. " +
+            "మీరు ఎంచుకున్న పంట: " + crop + ". " +
+            "గుర్తించినట్లు అంచనా వేసిన పురుగు: " + pest + ". " +
+            "గమనిక: ఈ గుర్తింపు తప్పు కావచ్చు. " +
+            "సూచించిన తదుపరి చర్యలు: " + advice + ". " +
+            "ఏ మందు వాడే ముందు స్థానిక వ్యవసాయ అధికారిని సంప్రదించండి. " +
+            "ధన్యవాదాలు.";
+
+        const speech = new SpeechSynthesisUtterance(message);
+        speech.lang = "te-IN";
+        speech.rate = 0.85;
+        speech.pitch = 1;
+
+        speech.onstart = function () {
+            status.textContent = "తెలుగు వాయిస్ ప్లే అవుతోంది...";
+        };
+
+        speech.onend = function () {
+            status.textContent = "వాయిస్ పూర్తయింది.";
+        };
+
+        speech.onerror = function () {
+            status.textContent =
+                "Voice could not play. Check your browser and available Telugu voices.";
+        };
+
+        window.speechSynthesis.speak(speech);
+    }
+
+    function stopVoice() {
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const status = document.getElementById("voiceStatus");
+
+            if (status) {
+                status.textContent = "Voice stopped.";
+            }
+        }
+    }
+</script>
 </body>
 </html>
