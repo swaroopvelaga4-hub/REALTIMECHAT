@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HarvestAI - Pest Doctor</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f8f1;
+            margin: 0;
+            color: #222;
+        }
+
+        header {
+            background: #176b35;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header a {
+            color: white;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 25px auto;
+            padding: 22px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #ccc;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #176b35;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .message {
+            padding: 12px;
+            margin-top: 15px;
+            background: #fff3e0;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>🐛 HarvestAI Pest Doctor</h1>
+    <p>AI-Assisted Crop Pest Identification</p>
+    <a href="/">← Back to Home</a>
+</header>
+
+<div class="container">
+    <h2>📸 Upload Pest Photo</h2>
+    <p>Take a clear photo of the insect on your crop.</p>
+
+    <form action="/pest-identify"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <label for="pest_image">Pest Photo</label>
+        <input type="file"
+               id="pest_image"
+               name="pest_image"
+               accept="image/*"
+               capture="environment"
+               required>
+
+        <label for="crop">Crop</label>
+        <select id="crop" name="crop" required>
+            <option value="">Select Crop</option>
+            <option value="Rice">Rice</option>
+            <option value="Cotton">Cotton</option>
+            <option value="Chilli">Chilli</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Maize">Maize</option>
+            <option value="Groundnut">Groundnut</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <button type="submit">🔍 Identify Pest</button>
+    </form>
+
+    {% if error %}
+    <div class="message">
+        <strong>Notice:</strong>
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if pest_name %}
+    <div class="message">
+        <h2>🐛 Analysis Result</h2>
+        <p><b>Possible Pest:</b> {{ pest_name }}</p>
+        <p><b>Confidence:</b> {{ confidence }}%</p>
+        <p><b>Crop:</b> {{ crop }}</p>
+        <p><b>Advice:</b> {{ advice }}</p>
+        <p>Confirm the pest identification with a local agricultural expert before using any pesticide.</p>
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>
