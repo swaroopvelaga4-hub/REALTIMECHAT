@@ -1,82 +1,97 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HarvestAI - Market Prices</title>
+    <title>HarvestAI - Live Crop Prices</title>
 
     <style>
+        * { box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f1f8f1;
             margin: 0;
-            color: #222;
-        }
-
-        header {
-            background: #176b35;
-            color: white;
-            text-align: center;
             padding: 20px;
-        }
-
-        header a {
-            color: white;
+            font-family: Arial, sans-serif;
+            background: #f0f7ef;
+            color: #23452b;
         }
 
         .container {
-            max-width: 650px;
-            margin: 25px auto;
-            padding: 22px;
+            max-width: 760px;
+            margin: auto;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px #ccc;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px #00000012;
+        }
+
+        h1 { color: #218838; text-align: center; }
+
+        .subtitle {
+            text-align: center;
+            color: #617064;
+            line-height: 1.6;
         }
 
         label {
             display: block;
-            margin-top: 15px;
             font-weight: bold;
+            margin-top: 17px;
         }
 
-        input, select, button {
+        input, select {
             width: 100%;
             padding: 12px;
-            margin-top: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            margin-top: 7px;
+            border: 1px solid #ccd7cc;
+            border-radius: 8px;
             font-size: 16px;
+            background: white;
         }
 
         button {
-            background: #176b35;
+            width: 100%;
+            padding: 13px;
+            margin-top: 18px;
+            border: 0;
+            border-radius: 9px;
+            background: #218838;
             color: white;
-            border: none;
+            font-size: 16px;
             cursor: pointer;
-            margin-top: 20px;
         }
 
-        .notice, .result-card {
+        button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .location-box, .notice, .results {
             margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 10px;
             line-height: 1.7;
         }
 
-        .notice {
-            background: #fff3e0;
+        .location-box { background: #edf7ee; }
+        .notice { background: #fff8df; color: #65521b; }
+        .results { background: #f5f8f5; overflow-wrap: anywhere; }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: #218838;
+            text-decoration: none;
         }
 
-        .result-card {
-            background: #eaf7ec;
-            border: 1px solid #b6dfbd;
+        .small {
+            color: #687568;
+            font-size: 13px;
         }
 
-        .table-wrap {
-            overflow-x: auto;
-        }
+        .table-wrap { overflow-x: auto; }
 
         table {
             width: 100%;
@@ -85,134 +100,388 @@
         }
 
         th, td {
-            padding: 10px;
+            border: 1px solid #d5dfd5;
+            padding: 9px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
         }
 
-        th {
-            background: #eaf7ec;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #555;
-        }
+        th { background: #e5f2e6; }
     </style>
 </head>
 
 <body>
-
-<header>
-    <h1>💰 HarvestAI Market Prices</h1>
-    <p>Check agricultural market prices</p>
-    <a href="/">← Back to Home</a>
-</header>
-
 <div class="container">
+    <h1>🌾 HarvestAI Crop Prices</h1>
 
-    <h2>🌾 Find Crop Prices</h2>
-    <p>Select your crop and location to find available market price information.</p>
+    <p class="subtitle">
+        Find available mandi prices for crops and markets near your location.
+    </p>
 
-    <form action="/market-prices" method="POST">
+    <div class="location-box">
+        <h3>📍 Your Current Location</h3>
+
+        <p id="locationStatus" aria-live="polite">
+            Location has not been detected yet.
+        </p>
+
+        <p><strong>Place / Village:</strong>
+            <span id="place">Not detected</span>
+        </p>
+
+        <p><strong>Mandal / Subdistrict:</strong>
+            <span id="mandal">Not detected</span>
+        </p>
+
+        <p><strong>District:</strong>
+            <span id="districtDisplay">Not detected</span>
+        </p>
+
+        <p><strong>State:</strong>
+            <span id="stateDisplay">Not detected</span>
+        </p>
+
+        <button type="button" id="locationButton"
+                onclick="detectLocation()">
+            📍 Detect My Location
+        </button>
+
+        <p class="small">
+            Allow location permission when prompted. Location names are
+            estimated from OpenStreetMap address data.
+        </p>
+    </div>
+
+    <form action="/market-prices" method="POST" id="priceForm">
+
+        <label for="cropSearch">Search Crop Name</label>
+        <input type="text" id="cropSearch"
+               placeholder="Type a crop name to find it">
 
         <label for="crop">Select Crop</label>
         <select id="crop" name="crop" required>
             <option value="">Choose crop</option>
-            <option value="Rice">Rice (Paddy)</option>
-            <option value="Maize">Maize</option>
-            <option value="Cotton">Cotton</option>
-            <option value="Chilli">Chilli</option>
-            <option value="Tomato">Tomato</option>
-            <option value="Groundnut">Groundnut</option>
-            <option value="Turmeric">Turmeric</option>
-            <option value="Onion">Onion</option>
+            <option>Rice (Paddy)</option>
+            <option>Maize</option>
+            <option>Wheat</option>
+            <option>Jowar</option>
+            <option>Bajra</option>
+            <option>Ragi</option>
+            <option>Barley</option>
+            <option>Ragi (Finger Millet)</option>
+            <option>Red Gram / Tur</option>
+            <option>Green Gram</option>
+            <option>Black Gram</option>
+            <option>Bengal Gram / Chickpea</option>
+            <option>Horse Gram</option>
+            <option>Cowpea</option>
+            <option>Groundnut</option>
+            <option>Soybean</option>
+            <option>Sunflower</option>
+            <option>Sesame</option>
+            <option>Mustard</option>
+            <option>Castor Seed</option>
+            <option>Cotton</option>
+            <option>Sugarcane</option>
+            <option>Chilli</option>
+            <option>Turmeric</option>
+            <option>Ginger</option>
+            <option>Garlic</option>
+            <option>Onion</option>
+            <option>Tomato</option>
+            <option>Potato</option>
+            <option>Brinjal</option>
+            <option>Okra / Lady Finger</option>
+            <option>Cabbage</option>
+            <option>Cauliflower</option>
+            <option>Carrot</option>
+            <option>Green Peas</option>
+            <option>Beans</option>
+            <option>Cucumber</option>
+            <option>Bitter Gourd</option>
+            <option>Bottle Gourd</option>
+            <option>Pumpkin</option>
+            <option>Watermelon</option>
+            <option>Muskmelon</option>
+            <option>Banana</option>
+            <option>Mango</option>
+            <option>Orange</option>
+            <option>Lemon</option>
+            <option>Sweet Lime</option>
+            <option>Guava</option>
+            <option>Papaya</option>
+            <option>Grapes</option>
+            <option>Pomegranate</option>
+            <option>Coconut</option>
+            <option>Arecanut</option>
+            <option>Cashew Nut</option>
+            <option>Jute</option>
+            <option>Tobacco</option>
+            <option>Coffee</option>
+            <option>Tea</option>
+            <option>Other</option>
         </select>
 
         <label for="state">State</label>
         <select id="state" name="state" required>
-            <option value="Andhra Pradesh">Andhra Pradesh</option>
-            <option value="Telangana">Telangana</option>
-            <option value="Karnataka">Karnataka</option>
-            <option value="Tamil Nadu">Tamil Nadu</option>
-            <option value="Maharashtra">Maharashtra</option>
+            <option value="">Select State</option>
+            <option>Andhra Pradesh</option>
+            <option>Telangana</option>
+            <option>Karnataka</option>
+            <option>Tamil Nadu</option>
+            <option>Maharashtra</option>
+            <option>Odisha</option>
+            <option>Kerala</option>
+            <option>Chhattisgarh</option>
+            <option>Madhya Pradesh</option>
+            <option>Uttar Pradesh</option>
+            <option>Gujarat</option>
+            <option>Rajasthan</option>
+            <option>Punjab</option>
+            <option>Haryana</option>
+            <option>Bihar</option>
+            <option>West Bengal</option>
+            <option>Jharkhand</option>
+            <option>Assam</option>
+            <option>Himachal Pradesh</option>
+            <option>Uttarakhand</option>
+            <option>Goa</option>
         </select>
 
         <label for="district">District</label>
-        <input
-            type="text"
-            id="district"
-            name="district"
-            placeholder="Example: East Godavari"
-            required
-        >
+        <input id="district" name="district"
+               placeholder="District name" required>
+
+        <label for="mandal">Mandal / Subdistrict</label>
+        <input id="mandalInput" name="mandal"
+               placeholder="Mandal name (if known)">
+
+        <label for="placeInput">Village / Place</label>
+        <input id="placeInput" name="place"
+               placeholder="Village or town name">
 
         <label for="market">Market / Mandi (optional)</label>
-        <input
-            type="text"
-            id="market"
-            name="market"
-            placeholder="Enter market name if known"
-        >
+        <input id="market" name="market"
+               placeholder="Enter market name if known">
 
-        <button type="submit">🔍 Find Market Prices</button>
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+
+        <button type="submit" id="searchButton">
+            🔍 Find Market Prices
+        </button>
     </form>
 
-    {% if error %}
-    <div class="notice" role="status">
-        <strong>Notice:</strong>
-        <p>{{ error }}</p>
-    </div>
-    {% endif %}
+    <div class="results">
+        <h3>📊 Available Market Prices</h3>
 
-    {% if prices %}
-    <div class="result-card">
-        <h2>📊 Market Price Results</h2>
-        <p>Crop: {{ selected_crop }}</p>
-        <p>Location: {{ selected_district }}, {{ selected_state }}</p>
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Market</th>
-                        <th>Minimum (₹/quintal)</th>
-                        <th>Maximum (₹/quintal)</th>
-                        <th>Modal (₹/quintal)</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
+        {% if prices %}
+            {% if price_date %}
+                <p><strong>Data date:</strong> {{ price_date }}</p>
+            {% endif %}
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Market</th>
+                            <th>Min Price</th>
+                            <th>Max Price</th>
+                            <th>Modal Price</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     {% for item in prices %}
-                    <tr>
-                        <td>{{ item.market }}</td>
-                        <td>{{ item.min_price }}</td>
-                        <td>{{ item.max_price }}</td>
-                        <td>{{ item.modal_price }}</td>
-                        <td>{{ item.date }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.crop }}</td>
+                            <td>{{ item.market }}</td>
+                            <td>₹{{ item.min_price }}</td>
+                            <td>₹{{ item.max_price }}</td>
+                            <td>₹{{ item.modal_price }}</td>
+                            <td>{{ item.date }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>
+                Market prices will appear here when the server retrieves
+                verified records from a connected data source.
+            </p>
+        {% endif %}
     </div>
-    {% endif %}
 
     <div class="notice">
         <strong>ℹ️ Important</strong>
-        <p>Market prices change daily and vary by crop variety, quality and market.</p>
-        <p>Use verified government market data before making selling decisions.</p>
-        <a href="https://www.data.gov.in/" target="_blank" rel="noopener">
+        <p>
+            Prices vary by market, crop variety and quality.
+            Always check the data date before making a selling decision.
+        </p>
+        <a href="https://www.data.gov.in/"
+           target="_blank" rel="noopener noreferrer">
             Visit Government Open Data Portal
         </a>
     </div>
 
+    <a class="back" href="/">← Back to HarvestAI Home</a>
 </div>
 
-<footer>
-    🌾 HarvestAI — Smart Farming with AI
-</footer>
+<script>
+    // Filter the crop dropdown by the text entered.
+    const cropSelect = document.getElementById("crop");
+    const originalCropOptions = Array.from(cropSelect.options).map(
+        option => ({
+            value: option.value,
+            text: option.text
+        })
+    );
 
+    document.getElementById("cropSearch").addEventListener("input", function () {
+        const query = this.value.trim().toLowerCase();
+        const currentValue = cropSelect.value;
+
+        cropSelect.innerHTML = "";
+
+        originalCropOptions.forEach(item => {
+            if (!query || item.text.toLowerCase().includes(query)) {
+                const option = document.createElement("option");
+                option.value = item.value;
+                option.textContent = item.text;
+                cropSelect.appendChild(option);
+            }
+        });
+
+        if (originalCropOptions.some(item =>
+            item.value === currentValue &&
+            (!query || item.text.toLowerCase().includes(query))
+        )) {
+            cropSelect.value = currentValue;
+        }
+    });
+
+    async function detectLocation() {
+        const status = document.getElementById("locationStatus");
+        const button = document.getElementById("locationButton");
+
+        if (!navigator.geolocation) {
+            status.textContent = "Your browser does not support location detection.";
+            return;
+        }
+
+        button.disabled = true;
+        status.textContent = "Requesting location permission...";
+
+        navigator.geolocation.getCurrentPosition(
+            async function (position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                document.getElementById("latitude").value = lat;
+                document.getElementById("longitude").value = lon;
+
+                status.textContent = "Coordinates found. Looking up address...";
+
+                try {
+                    const url =
+                        "https://nominatim.openstreetmap.org/reverse" +
+                        "?format=jsonv2&lat=" + encodeURIComponent(lat) +
+                        "&lon=" + encodeURIComponent(lon) +
+                        "&zoom=10&addressdetails=1";
+
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error("Address lookup unavailable");
+                    }
+
+                    const data = await response.json();
+                    const address = data.address || {};
+
+                    const place =
+                        address.village ||
+                        address.town ||
+                        address.city ||
+                        address.hamlet ||
+                        address.suburb ||
+                        address.county ||
+                        "Not available";
+
+                    const mandal =
+                        address.subdistrict ||
+                        address.municipality ||
+                        address.county ||
+                        "";
+
+                    const district =
+                        address.state_district ||
+                        address.district ||
+                        address.county ||
+                        "";
+
+                    const state = address.state || "";
+
+                    document.getElementById("place").textContent = place;
+                    document.getElementById("mandal").textContent =
+                        mandal || "Not available";
+                    document.getElementById("districtDisplay").textContent =
+                        district || "Not available";
+                    document.getElementById("stateDisplay").textContent =
+                        state || "Not available";
+
+                    document.getElementById("placeInput").value =
+                        place === "Not available" ? "" : place;
+
+                    document.getElementById("mandalInput").value = mandal;
+                    document.getElementById("district").value = district;
+
+                    const stateSelect = document.getElementById("state");
+                    const matchingState = Array.from(stateSelect.options).find(
+                        option =>
+                            option.value.toLowerCase() === state.toLowerCase()
+                    );
+
+                    if (matchingState) {
+                        stateSelect.value = matchingState.value;
+                    }
+
+                    status.textContent =
+                        "Location detected. Please check the address fields.";
+                } catch (error) {
+                    status.textContent =
+                        "GPS coordinates found, but the address lookup failed. Enter your location details manually.";
+                } finally {
+                    button.disabled = false;
+                }
+            },
+
+            function (error) {
+                const messages = {
+                    1: "Location permission was denied. Allow location access or enter your details manually.",
+                    2: "Your location is unavailable. Try again or enter it manually.",
+                    3: "Location request timed out. Please try again."
+                };
+
+                status.textContent =
+                    messages[error.code] ||
+                    "Could not detect location. Please enter it manually.";
+
+                button.disabled = false;
+            },
+
+            {
+                enableHighAccuracy: false,
+                timeout: 15000,
+                maximumAge: 300000
+            }
+        );
+    }
+</script>
 </body>
 </html>
+```
