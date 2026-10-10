@@ -241,7 +241,6 @@ def pest_identify():
     image_path = os.path.join(UPLOAD_FOLDER, filename)
     pest_image.save(image_path)
 
-    # Pest AI model is not connected yet.
     return render_template(
         "pest_identification.html",
         error=(
@@ -395,7 +394,6 @@ def market_prices():
                 error="Please select a crop, state, and district."
             )
 
-        # Live market data source is not connected yet.
         return render_template(
             "market_prices.html",
             error=(
@@ -410,6 +408,13 @@ def market_prices():
         )
 
     return render_template("market_prices.html")
+
+
+# ---------------- AI FARMING CHATBOT PAGE ----------------
+
+@app.route("/chatbot")
+def chatbot():
+    return render_template("chatbot.html")
 
 
 # ---------------- ERROR HANDLERS ----------------
