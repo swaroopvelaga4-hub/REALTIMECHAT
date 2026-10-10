@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +26,9 @@
             text-align: center;
         }
 
-        header h1 { font-size: 32px; }
+        header h1 {
+            font-size: 32px;
+        }
 
         header p {
             margin-top: 8px;
@@ -87,6 +90,10 @@
             margin-bottom: 15px;
         }
 
+        .card a {
+            text-decoration: none;
+        }
+
         .card button {
             background: #176b35;
             color: white;
@@ -109,9 +116,17 @@
         }
 
         @media (max-width: 600px) {
-            header h1 { font-size: 26px; }
-            .hero h2 { font-size: 23px; }
-            .features { padding: 20px; }
+            header h1 {
+                font-size: 26px;
+            }
+
+            .hero h2 {
+                font-size: 23px;
+            }
+
+            .features {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -133,56 +148,63 @@
             <div class="icon">🌿</div>
             <h3>Crop Disease Detection</h3>
             <p>Upload a crop photo and identify possible diseases.</p>
-            <a href="/crop-disease"><button>Open</button></a>
+            <a href="/crop-disease"><button type="button">Open</button></a>
         </div>
 
         <div class="card">
             <div class="icon">🌦️</div>
             <h3>Weather Forecast</h3>
             <p>Check weather conditions and farming alerts.</p>
-            <a href="/weather"><button>Open</button></a>
+            <a href="/weather"><button type="button">Open</button></a>
         </div>
 
         <div class="card">
             <div class="icon">🌱</div>
             <h3>Crop Recommendation</h3>
             <p>Find suitable crops based on farming conditions.</p>
-            <a href="/crop-recommendation"><button>Open</button></a>
+            <a href="/crop-recommendation"><button type="button">Open</button></a>
         </div>
 
         <div class="card">
             <div class="icon">🐛</div>
             <h3>Pest Identification</h3>
             <p>Identify pests and learn prevention methods.</p>
-            <button onclick="alert('Pest Identification page is coming soon!')">Open</button>
+            <a href="/pest-doctor"><button type="button">Open</button></a>
         </div>
 
         <div class="card">
             <div class="icon">💰</div>
             <h3>Market Prices</h3>
             <p>Check crop market prices and selling information.</p>
-            <button onclick="alert('Market Prices page is coming soon!')">Open</button>
+            <button type="button" onclick="alert('Market Prices page is coming soon!')">Open</button>
         </div>
 
         <div class="card">
             <div class="icon">🤖</div>
             <h3>AI Farming Chatbot</h3>
             <p>Ask farming questions and get AI assistance.</p>
-            <button onclick="alert('AI Farming Chatbot is coming soon!')">Open</button>
+            <button type="button" onclick="alert('AI Farming Chatbot is coming soon!')">Open</button>
         </div>
 
         <div class="card">
             <div class="icon">🍃</div>
             <h3>Leaf Doctor</h3>
             <p>Scan a leaf and get disease and treatment information.</p>
-            <a href="/crop-disease"><button>Open</button></a>
+            <a href="/crop-disease"><button type="button">Open</button></a>
         </div>
 
         <div class="card">
             <div class="icon">📅</div>
             <h3>Crop Calendar</h3>
             <p>Track important farming activities and reminders.</p>
-            <button onclick="alert('Crop Calendar page is coming soon!')">Open</button>
+            <button type="button" onclick="alert('Crop Calendar page is coming soon!')">Open</button>
+        </div>
+
+        <div class="card">
+            <div class="icon">🪴</div>
+            <h3>Soil Doctor</h3>
+            <p>Upload a soil photo for preliminary soil information.</p>
+            <a href="/soil-doctor"><button type="button">Open</button></a>
         </div>
 
     </section>
@@ -192,4 +214,4 @@
     </footer>
 </body>
 </html>
-
+```
