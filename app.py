@@ -1,8 +1,9 @@
+
 from flask import Flask, render_template, request
 import os
 import requests
-from werkzeug.utils import secure_filename
 from datetime import datetime
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -28,29 +29,26 @@ SOIL_MODEL_URL = (
     "Ben041/soil-type-classifier"
 )
 
-
-# ---------------- HOME PAGE ----------------
+# ---------------- HOME ----------------
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-# ---------------- ABOUT PAGE ----------------
-
 @app.route("/about")
 def about():
     return "HarvestAI - AI Farming Assistant"
 
 
-# ---------------- WEATHER PAGE ----------------
+# ---------------- WEATHER ----------------
 
 @app.route("/weather")
 def weather():
     return render_template("weather.html")
 
 
-# ---------------- CROP RECOMMENDATION PAGE ----------------
+# ---------------- CROP RECOMMENDATION ----------------
 
 @app.route("/crop-recommendation")
 def crop_recommendation():
@@ -75,10 +73,9 @@ def crop_disease():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-
     image = request.files.get("image")
 
-    if not image or image.filename == "":
+    if not image or not image.filename:
         return render_template(
             "crop_disease.html",
             result="Please select a crop or leaf image."
@@ -98,16 +95,20 @@ def predict():
             result="Invalid image filename."
         )
 
-    # Avoid overwriting another uploaded file
-    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S%f')}_{filename}"
-    image_path = os.path.join(UPLOAD_FOLDER, filename)
+    filename = (
+        datetime.now().strftime("%Y%m%d%H%M%S%f")
+        + "_" + filename
+    )
 
+    image_path = os.path.join(UPLOAD_FOLDER, filename)
     image.save(image_path)
+    image_url = "/static/uploads/" + filename
 
     if not HF_TOKEN:
         return render_template(
             "crop_disease.html",
-            result="Hugging Face API token is missing."
+            result="Hugging Face API token is missing.",
+            image_url=image_url
         )
 
     try:
@@ -119,19 +120,17 @@ def predict():
                 timeout=60
             )
 
-        print("DISEASE MODEL STATUS:", response.status_code)
-
         if response.status_code != 200:
             return render_template(
                 "crop_disease.html",
-                result="AI model is unavailable. Please try again later.",
+                result="AI model unavailable. Please try again later.",
                 crop_name="Not detected",
                 disease="Analysis unavailable",
-                treatment="Confirm the disease before treatment.",
+                treatment="Confirm the diagnosis with an expert.",
                 fertilizer="Not available",
                 fertilizer_quantity="Not available",
                 prevention="Consult a local agricultural expert.",
-                image_url="/" + image_path
+                image_url=image_url
             )
 
         predictions = response.json()
@@ -140,13 +139,7 @@ def predict():
             return render_template(
                 "crop_disease.html",
                 result="No prediction returned by the AI model.",
-                crop_name="Not detected",
-                disease="Unable to identify",
-                treatment="Please try another clear image.",
-                fertilizer="Not available",
-                fertilizer_quantity="Not available",
-                prevention="Consult a local agricultural expert.",
-                image_url="/" + image_path
+                image_url=image_url
             )
 
         best = max(
@@ -164,32 +157,25 @@ def predict():
             disease=f"{label} ({confidence:.1f}% confidence)",
             treatment="Confirm the diagnosis with an agricultural expert.",
             fertilizer="Depends on the confirmed crop and disease.",
-            fertilizer_quantity="Follow a soil-test-based recommendation.",
+            fertilizer_quantity="Follow soil-test-based advice.",
             prevention="Monitor plants and maintain field hygiene.",
-            image_url="/" + image_path
+            image_url=image_url
         )
 
     except requests.RequestException as error:
         print("DISEASE API ERROR:", error)
-
         return render_template(
             "crop_disease.html",
             result="Could not connect to the AI service. Please retry.",
-            crop_name="Not detected",
-            disease="Analysis unavailable",
-            treatment="Try again later.",
-            fertilizer="Not available",
-            fertilizer_quantity="Not available",
-            prevention="Consult a local agricultural expert.",
-            image_url="/" + image_path
+            image_url=image_url
         )
 
     except Exception as error:
         print("DISEASE DETECTION ERROR:", error)
-
         return render_template(
             "crop_disease.html",
-            result="An error occurred during image analysis."
+            result="An error occurred during image analysis.",
+            image_url=image_url
         )
 
 
@@ -204,7 +190,8 @@ def get_season():
         return "Rabi (Winter season)"
     else:
         return "Summer"
-        
+
+
 # ---------------- PEST DOCTOR PAGE ----------------
 
 @app.route("/pest-doctor")
@@ -219,7 +206,7 @@ def pest_identify():
     pest_image = request.files.get("pest_image")
     crop = request.form.get("crop", "").strip()
 
-    if not pest_image or pest_image.filename == "":
+    if not pest_image or not pest_image.filename:
         return render_template(
             "pest_identification.html",
             error="Please upload a pest photo."
@@ -237,29 +224,41 @@ def pest_identify():
             error="Please select a crop."
         )
 
-    if not HF_TOKEN:
+    filename = secure_filename(pest_image.filename)
+
+    if not filename:
         return render_template(
             "pest_identification.html",
-            error="AI token is missing. Please check Render Environment."
+            error="Invalid image filename."
         )
 
-    # Pest AI model integration will be added next.
-    return render_template(
-        "pest_identification.html",
-        error="Photo received successfully. Pest AI identification is not connected yet."
+    filename = (
+        datetime.now().strftime("%Y%m%d%H%M%S%f")
+        + "_" + filename
     )
 
+    image_path = os.path.join(UPLOAD_FOLDER, filename)
+    pest_image.save(image_path)
+
+    # Actual pest AI model is not connected yet.
+    return render_template(
+        "pest_identification.html",
+        error=(
+            f"{crop} photo uploaded successfully. "
+            "AI pest detection is not connected yet."
+        ),
+        image_url="/static/uploads/" + filename
+    )
 
 
 # ---------------- SOIL PHOTO DETECTION ----------------
 
 @app.route("/soil-detect", methods=["POST"])
 def soil_detect():
-
     image = request.files.get("soil_image")
     district = request.form.get("district", "").strip()
 
-    if not image or image.filename == "":
+    if not image or not image.filename:
         return render_template(
             "soil_detection.html",
             error="Please upload a soil photo."
@@ -291,7 +290,11 @@ def soil_detect():
             error="Invalid image filename."
         )
 
-    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S%f')}_{filename}"
+    filename = (
+        datetime.now().strftime("%Y%m%d%H%M%S%f")
+        + "_" + filename
+    )
+
     image_path = os.path.join(UPLOAD_FOLDER, filename)
 
     try:
@@ -303,7 +306,6 @@ def soil_detect():
                 error="The uploaded image is empty."
             )
 
-        # Save the uploaded photo
         with open(image_path, "wb") as saved_image:
             saved_image.write(image_bytes)
 
@@ -315,15 +317,11 @@ def soil_detect():
         )
 
         print("SOIL MODEL STATUS:", response.status_code)
-        print("SOIL MODEL RESPONSE:", response.text[:500])
 
         if response.status_code != 200:
             return render_template(
                 "soil_detection.html",
-                error=(
-                    "Soil AI service is unavailable or returned an error. "
-                    "Please try again later."
-                )
+                error="Soil AI service unavailable. Please try again."
             )
 
         predictions = response.json()
@@ -343,7 +341,6 @@ def soil_detect():
         confidence = round(float(best.get("score", 0)) * 100, 1)
         soil = soil_type.lower()
 
-        # Preliminary crop suggestions; local conditions still matter
         if "black" in soil:
             crops = ["Cotton", "Pulses", "Sorghum"]
         elif "red" in soil or "laterite" in soil:
@@ -368,7 +365,6 @@ def soil_detect():
 
     except requests.RequestException as error:
         print("SOIL API ERROR:", error)
-
         return render_template(
             "soil_detection.html",
             error="Could not connect to the soil AI service. Please retry."
@@ -376,7 +372,6 @@ def soil_detect():
 
     except Exception as error:
         print("SOIL DETECTION ERROR:", error)
-
         return render_template(
             "soil_detection.html",
             error="Soil analysis failed. Please try another clear photo."
