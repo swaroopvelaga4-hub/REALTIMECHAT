@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request
 import os
 import requests
@@ -205,6 +204,51 @@ def get_season():
         return "Rabi (Winter season)"
     else:
         return "Summer"
+        
+# ---------------- PEST DOCTOR PAGE ----------------
+
+@app.route("/pest-doctor")
+def pest_doctor():
+    return render_template("pest_identification.html")
+
+
+# ---------------- PEST IDENTIFICATION ----------------
+
+@app.route("/pest-identify", methods=["POST"])
+def pest_identify():
+    pest_image = request.files.get("pest_image")
+    crop = request.form.get("crop", "").strip()
+
+    if not pest_image or pest_image.filename == "":
+        return render_template(
+            "pest_identification.html",
+            error="Please upload a pest photo."
+        )
+
+    if not pest_image.mimetype or not pest_image.mimetype.startswith("image/"):
+        return render_template(
+            "pest_identification.html",
+            error="Please upload a valid image."
+        )
+
+    if not crop:
+        return render_template(
+            "pest_identification.html",
+            error="Please select a crop."
+        )
+
+    if not HF_TOKEN:
+        return render_template(
+            "pest_identification.html",
+            error="AI token is missing. Please check Render Environment."
+        )
+
+    # Pest AI model integration will be added next.
+    return render_template(
+        "pest_identification.html",
+        error="Photo received successfully. Pest AI identification is not connected yet."
+    )
+
 
 
 # ---------------- SOIL PHOTO DETECTION ----------------
