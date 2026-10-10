@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HarvestAI - Crop Calendar</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f8f1;
+            color: #222;
+        }
+
+        header {
+            background: #176b35;
+            color: white;
+            text-align: center;
+            padding: 22px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 15px;
+        }
+
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px #00000012;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        select {
+            border: 1px solid #bbb;
+            background: white;
+        }
+
+        button {
+            background: #176b35;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .calendar-item {
+            border-left: 5px solid #176b35;
+            background: #f5faf5;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 7px;
+        }
+
+        .calendar-item h3 {
+            color: #176b35;
+            margin-top: 0;
+        }
+
+        .note {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .home {
+            color: #176b35;
+            display: inline-block;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>📅 HarvestAI Crop Calendar</h1>
+        <p>పంటల సాగు క్యాలెండర్</p>
+    </header>
+
+    <main class="container">
+        <section class="panel">
+            <h2>🌱 Plan Your Crop</h2>
+            <p class="note">
+                Select your crop and season to see a general farming calendar.
+                స్థానిక వాతావరణం, నేల, నీటి లభ్యత ఆధారంగా తేదీలు మారవచ్చు.
+            </p>
+
+            <label for="crop">Select Crop / పంట</label>
+            <select id="crop">
+                <option value="rice">Rice / వరి</option>
+                <option value="cotton">Cotton / పత్తి</option>
+                <option value="maize">Maize / మొక్కజొన్న</option>
+                <option value="groundnut">Groundnut / వేరుశనగ</option>
+                <option value="chilli">Chilli / మిరప</option>
+            </select>
+
+            <label for="season">Select Season / సీజన్</label>
+            <select id="season">
+                <option value="kharif">Kharif / వర్షాకాలం</option>
+                <option value="rabi">Rabi / శీతాకాలం</option>
+                <option value="summer">Summer / వేసవికాలం</option>
+            </select>
+
+            <button type="button" onclick="showCalendar()">
+                Show Crop Calendar
+            </button>
+        </section>
+
+        <section class="panel">
+            <h2>🗓️ Farming Schedule</h2>
+            <div id="calendar" aria-live="polite">
+                <p class="note">
+                    Select a crop and season, then press Show Crop Calendar.
+                </p>
+            </div>
+        </section>
+
+        <a class="home" href="/">← Back to Home</a>
+    </main>
+
+    <script>
+        const schedules = {
+            rice: [
+                ["Land Preparation", "Prepare and level the field; check water availability."],
+                ["Sowing / Nursery", "Use a locally recommended variety and healthy seed."],
+                ["Transplanting", "Transplant at the recommended seedling stage, where applicable."],
+                ["Crop Care", "Monitor weeds, water and crop health regularly."],
+                ["Harvest", "Harvest when grains reach the recommended maturity."]
+            ],
+            cotton: [
+                ["Land Preparation", "Prepare well-drained soil and plan suitable spacing."],
+                ["Sowing", "Choose locally recommended seed and sowing time."],
+                ["Crop Growth", "Monitor moisture, weeds and plant growth."],
+                ["Pest Monitoring", "Inspect plants regularly and identify pests before treatment."],
+                ["Picking", "Pick mature, open bolls when conditions are suitable."]
+            ],
+            maize: [
+                ["Land Preparation", "Prepare the field and ensure drainage."],
+                ["Sowing", "Use recommended seed and spacing for your area."],
+                ["Early Growth", "Check germination and manage weeds."],
+                ["Crop Care", "Monitor moisture and plant health."],
+                ["Harvest", "Harvest when cobs and grains reach maturity."]
+            ],
+            groundnut: [
+                ["Land Preparation", "Use loose, well-drained soil."],
+                ["Sowing", "Use healthy seed and locally recommended spacing."],
+                ["Vegetative Growth", "Monitor weeds and soil moisture."],
+                ["Pegging and Pod Growth", "Maintain suitable soil moisture; avoid waterlogging."],
+                ["Harvest", "Harvest when pods are mature according to local guidance."]
+            ],
+            chilli: [
+                ["Nursery Preparation", "Raise healthy seedlings using recommended practices."],
+                ["Transplanting", "Transplant healthy seedlings at the suitable stage."],
+                ["Vegetative Growth", "Monitor moisture, weeds and plant health."],
+                ["Flowering and Fruiting", "Check for pests and diseases regularly."],
+                ["Harvest", "Pick fruit at the maturity required for your market."]
+            ]
+        };
+
+        const seasonNotes = {
+            kharif: "Rainy season: check rainfall forecasts and ensure field drainage.",
+            rabi: "Cooler season: check local temperatures and irrigation needs.",
+            summer: "Hot season: check water availability and heat conditions before planting."
+        };
+
+        function showCalendar() {
+            const crop = document.getElementById("crop").value;
+            const season = document.getElementById("season").value;
+            const calendar = document.getElementById("calendar");
+
+            calendar.replaceChildren();
+
+            const note = document.createElement("p");
+            note.className = "note";
+            note.textContent = seasonNotes[season] +
+                " This is a general guide, not a location-specific date schedule.";
+            calendar.appendChild(note);
+
+            schedules[crop].forEach(function(stage, index) {
+                const item = document.createElement("div");
+                item.className = "calendar-item";
+
+                const heading = document.createElement("h3");
+                heading.textContent = (index + 1) + ". " + stage[0];
+
+                const description = document.createElement("p");
+                description.textContent = stage[1];
+
+                item.appendChild(heading);
+                item.appendChild(description);
+                calendar.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
