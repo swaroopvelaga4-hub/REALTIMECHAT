@@ -426,5 +426,12 @@ def file_too_large(error):
 
 # ---------------- RUN APP ----------------
 
+# ---------------- CROP CALENDAR ----------------
+
+@app.route("/crop-calendar")
+def crop_calendar():
+    return render_template("crop_calendar.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
