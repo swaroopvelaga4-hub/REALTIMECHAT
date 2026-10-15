@@ -1,406 +1,768 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HarvestAI - Live Crop Prices</title>
+
+    <title>HarvestAI - Live Market Prices</title>
 
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
-            padding: 20px;
+            padding: 14px;
             font-family: Arial, sans-serif;
-            background: #f0f7ef;
-            color: #23452b;
+            background: #edf5ed;
+            color: #24472d;
         }
 
         .container {
-            max-width: 760px;
+            max-width: 850px;
             margin: auto;
             background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 16px #00000012;
+            padding: 22px;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px #00000012;
         }
 
-        h1 { color: #218838; text-align: center; }
+        h1 {
+            text-align: center;
+            color: #218838;
+            font-size: 27px;
+        }
+
+        h2, h3 {
+            color: #285b35;
+        }
 
         .subtitle {
             text-align: center;
-            color: #617064;
-            line-height: 1.6;
+            color: #68766a;
+            line-height: 1.7;
+        }
+
+        .location-box,
+        .results,
+        .notice {
+            margin-top: 22px;
+            padding: 17px;
+            border-radius: 13px;
+            line-height: 1.7;
+        }
+
+        .location-box {
+            background: #edf8ee;
+            border: 1px solid #d7ead9;
+        }
+
+        .results {
+            background: #f7faf7;
+            border: 1px solid #e1e9e1;
+        }
+
+        .notice {
+            background: #fff7df;
+            color: #65521b;
         }
 
         label {
             display: block;
-            font-weight: bold;
             margin-top: 17px;
+            font-weight: bold;
+            color: #31533a;
         }
 
-        input, select {
+        input,
+        select {
+            display: block;
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             margin-top: 7px;
-            border: 1px solid #ccd7cc;
-            border-radius: 8px;
+            border: 1px solid #cbd8cc;
+            border-radius: 9px;
             font-size: 16px;
             background: white;
+            color: #222;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid #a4d5ad;
+            border-color: #218838;
         }
 
         button {
             width: 100%;
-            padding: 13px;
-            margin-top: 18px;
-            border: 0;
-            border-radius: 9px;
+            padding: 14px;
+            margin-top: 17px;
+            border: none;
+            border-radius: 10px;
             background: #218838;
             color: white;
-            font-size: 16px;
+            font-size: 17px;
+            font-weight: bold;
             cursor: pointer;
         }
 
         button:disabled {
-            opacity: 0.65;
+            opacity: 0.6;
             cursor: wait;
         }
 
-        .location-box, .notice, .results {
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 10px;
-            line-height: 1.7;
-        }
-
-        .location-box { background: #edf7ee; }
-        .notice { background: #fff8df; color: #65521b; }
-        .results { background: #f5f8f5; overflow-wrap: anywhere; }
-
-        .back {
-            display: block;
-            text-align: center;
-            margin-top: 22px;
-            color: #218838;
-            text-decoration: none;
+        .secondary-button {
+            background: #347b48;
         }
 
         .small {
-            color: #687568;
+            color: #6a786b;
             font-size: 13px;
         }
 
-        .table-wrap { overflow-x: auto; }
+        .status {
+            font-weight: bold;
+        }
+
+        .error {
+            padding: 12px;
+            margin: 12px 0;
+            background: #ffeded;
+            border: 1px solid #efcaca;
+            border-radius: 8px;
+            color: #a32020;
+            overflow-wrap: anywhere;
+        }
+
+        .success {
+            padding: 12px;
+            margin: 12px 0;
+            background: #e7f7e9;
+            border: 1px solid #c5e6cb;
+            border-radius: 8px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
 
         table {
             width: 100%;
+            min-width: 650px;
             border-collapse: collapse;
-            margin-top: 12px;
+            background: white;
         }
 
-        th, td {
-            border: 1px solid #d5dfd5;
-            padding: 9px;
+        th,
+        td {
+            padding: 11px;
+            border: 1px solid #d7e1d7;
             text-align: left;
         }
 
-        th { background: #e5f2e6; }
+        th {
+            background: #dff0e1;
+            color: #24472d;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f5faf5;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #218838;
+            white-space: nowrap;
+        }
+
+        .back {
+            display: block;
+            margin-top: 24px;
+            text-align: center;
+            color: #218838;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .empty-state {
+            padding: 15px;
+            background: white;
+            border: 1px dashed #cbd8cc;
+            border-radius: 9px;
+            color: #667368;
+        }
+
+        .source-link {
+            color: #218838;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+
+            .location-box,
+            .results,
+            .notice {
+                padding: 13px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
 <div class="container">
-    <h1>🌾 HarvestAI Crop Prices</h1>
+
+    <h1>🌾 HarvestAI Market Prices</h1>
 
     <p class="subtitle">
-        Find available mandi prices for crops and markets near your location.
+        Check available government mandi prices for your crops
+        and compare prices across markets.
     </p>
 
+    <!-- LOCATION -->
+
     <div class="location-box">
+
         <h3>📍 Your Current Location</h3>
 
-        <p id="locationStatus" aria-live="polite">
+        <p id="locationStatus" class="status" aria-live="polite">
             Location has not been detected yet.
         </p>
 
-        <p><strong>Place / Village:</strong>
-            <span id="place">Not detected</span>
+        <p>
+            <strong>Village / Place:</strong>
+            <span id="placeDisplay">Not detected</span>
         </p>
 
-        <p><strong>Mandal / Subdistrict:</strong>
-            <span id="mandal">Not detected</span>
+        <p>
+            <strong>Mandal / Subdistrict:</strong>
+            <span id="mandalDisplay">Not detected</span>
         </p>
 
-        <p><strong>District:</strong>
+        <p>
+            <strong>District:</strong>
             <span id="districtDisplay">Not detected</span>
         </p>
 
-        <p><strong>State:</strong>
+        <p>
+            <strong>State:</strong>
             <span id="stateDisplay">Not detected</span>
         </p>
 
-        <button type="button" id="locationButton"
-                onclick="detectLocation()">
+        <button
+            type="button"
+            id="locationButton"
+            class="secondary-button"
+            onclick="detectLocation()">
+
             📍 Detect My Location
+
         </button>
 
         <p class="small">
-            Allow location permission when prompted. Location names are
-            estimated from OpenStreetMap address data.
+            Allow location permission when prompted.
+            You can also enter your location manually.
+            Address names are estimated from OpenStreetMap data.
         </p>
+
     </div>
 
-    <form action="/market-prices" method="POST" id="priceForm">
+    <!-- MARKET SEARCH FORM -->
 
-        <label for="cropSearch">Search Crop Name</label>
-        <input type="text" id="cropSearch"
-               placeholder="Type a crop name to find it">
+    <form
+        action="/market-prices"
+        method="POST"
+        id="priceForm">
 
-        <label for="crop">Select Crop</label>
+        <h3>🔎 Search Market Prices</h3>
+
+        <label for="cropSearch">
+            Search Crop Name
+        </label>
+
+        <input
+            type="text"
+            id="cropSearch"
+            placeholder="Example: Paddy, Cotton, Chilli">
+
+        <label for="crop">
+            Select Crop
+        </label>
+
         <select id="crop" name="crop" required>
+
             <option value="">Choose crop</option>
-            <option>Rice (Paddy)</option>
-            <option>Maize</option>
-            <option>Wheat</option>
-            <option>Jowar</option>
-            <option>Bajra</option>
-            <option>Ragi</option>
-            <option>Barley</option>
-            <option>Ragi (Finger Millet)</option>
-            <option>Red Gram / Tur</option>
-            <option>Green Gram</option>
-            <option>Black Gram</option>
-            <option>Bengal Gram / Chickpea</option>
-            <option>Horse Gram</option>
-            <option>Cowpea</option>
-            <option>Groundnut</option>
-            <option>Soybean</option>
-            <option>Sunflower</option>
-            <option>Sesame</option>
-            <option>Mustard</option>
-            <option>Castor Seed</option>
-            <option>Cotton</option>
-            <option>Sugarcane</option>
-            <option>Chilli</option>
-            <option>Turmeric</option>
-            <option>Ginger</option>
-            <option>Garlic</option>
-            <option>Onion</option>
-            <option>Tomato</option>
-            <option>Potato</option>
-            <option>Brinjal</option>
-            <option>Okra / Lady Finger</option>
-            <option>Cabbage</option>
-            <option>Cauliflower</option>
-            <option>Carrot</option>
-            <option>Green Peas</option>
-            <option>Beans</option>
-            <option>Cucumber</option>
-            <option>Bitter Gourd</option>
-            <option>Bottle Gourd</option>
-            <option>Pumpkin</option>
-            <option>Watermelon</option>
-            <option>Muskmelon</option>
-            <option>Banana</option>
-            <option>Mango</option>
-            <option>Orange</option>
-            <option>Lemon</option>
-            <option>Sweet Lime</option>
-            <option>Guava</option>
-            <option>Papaya</option>
-            <option>Grapes</option>
-            <option>Pomegranate</option>
-            <option>Coconut</option>
-            <option>Arecanut</option>
-            <option>Cashew Nut</option>
-            <option>Jute</option>
-            <option>Tobacco</option>
-            <option>Coffee</option>
-            <option>Tea</option>
-            <option>Other</option>
+
+            <option value="Paddy">Rice / Paddy</option>
+            <option value="Maize">Maize</option>
+            <option value="Wheat">Wheat</option>
+            <option value="Jowar">Jowar / Sorghum</option>
+            <option value="Bajra">Bajra / Pearl Millet</option>
+            <option value="Ragi">Ragi / Finger Millet</option>
+            <option value="Barley">Barley</option>
+
+            <option value="Arhar (Tur/Red Gram)">
+                Red Gram / Tur
+            </option>
+
+            <option value="Moong (Green Gram)">
+                Green Gram
+            </option>
+
+            <option value="Urad (Black Gram)">
+                Black Gram
+            </option>
+
+            <option value="Gram">Bengal Gram / Chickpea</option>
+            <option value="Horse-gram">Horse Gram</option>
+            <option value="Cowpea">Cowpea</option>
+
+            <option value="Groundnut">Groundnut</option>
+            <option value="Soyabean">Soybean</option>
+            <option value="Sunflower">Sunflower</option>
+            <option value="Sesamum">Sesame</option>
+            <option value="Mustard">Mustard</option>
+            <option value="Castor Seed">Castor Seed</option>
+            <option value="Cotton">Cotton</option>
+            <option value="Sugarcane">Sugarcane</option>
+
+            <option value="Chilli">Chilli</option>
+            <option value="Turmeric">Turmeric</option>
+            <option value="Ginger">Ginger</option>
+            <option value="Garlic">Garlic</option>
+            <option value="Onion">Onion</option>
+            <option value="Tomato">Tomato</option>
+            <option value="Potato">Potato</option>
+            <option value="Brinjal">Brinjal</option>
+            <option value="Bhindi (Ladies Finger)">
+                Okra / Lady Finger
+            </option>
+
+            <option value="Cabbage">Cabbage</option>
+            <option value="Cauliflower">Cauliflower</option>
+            <option value="Carrot">Carrot</option>
+            <option value="Peas">Green Peas</option>
+            <option value="Beans">Beans</option>
+            <option value="Cucumber">Cucumber</option>
+            <option value="Bitter Gourd">Bitter Gourd</option>
+            <option value="Bottle Gourd">Bottle Gourd</option>
+            <option value="Pumpkin">Pumpkin</option>
+            <option value="Watermelon">Watermelon</option>
+            <option value="Muskmelon">Muskmelon</option>
+
+            <option value="Banana">Banana</option>
+            <option value="Mango">Mango</option>
+            <option value="Orange">Orange</option>
+            <option value="Lemon">Lemon</option>
+            <option value="Guava">Guava</option>
+            <option value="Papaya">Papaya</option>
+            <option value="Grapes">Grapes</option>
+            <option value="Pomegranate">Pomegranate</option>
+            <option value="Coconut">Coconut</option>
+            <option value="Arecanut">Arecanut</option>
+            <option value="Cashew">Cashew Nut</option>
+            <option value="Jute">Jute</option>
+            <option value="Tobacco">Tobacco</option>
+            <option value="Coffee">Coffee</option>
+            <option value="Tea">Tea</option>
+
         </select>
 
-        <label for="state">State</label>
+        <label for="state">
+            State
+        </label>
+
         <select id="state" name="state" required>
+
             <option value="">Select State</option>
-            <option>Andhra Pradesh</option>
-            <option>Telangana</option>
-            <option>Karnataka</option>
-            <option>Tamil Nadu</option>
-            <option>Maharashtra</option>
-            <option>Odisha</option>
-            <option>Kerala</option>
-            <option>Chhattisgarh</option>
-            <option>Madhya Pradesh</option>
-            <option>Uttar Pradesh</option>
-            <option>Gujarat</option>
-            <option>Rajasthan</option>
-            <option>Punjab</option>
-            <option>Haryana</option>
-            <option>Bihar</option>
-            <option>West Bengal</option>
-            <option>Jharkhand</option>
-            <option>Assam</option>
-            <option>Himachal Pradesh</option>
-            <option>Uttarakhand</option>
-            <option>Goa</option>
+
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Bihar">Bihar</option>
+            <option value="West Bengal">West Bengal</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Assam">Assam</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="Goa">Goa</option>
+
         </select>
 
-        <label for="district">District</label>
-        <input id="district" name="district"
-               placeholder="District name" required>
+        <label for="district">
+            District
+        </label>
 
-        <label for="mandal">Mandal / Subdistrict</label>
-        <input id="mandalInput" name="mandal"
-               placeholder="Mandal name (if known)">
+        <input
+            type="text"
+            id="district"
+            name="district"
+            placeholder="Example: East Godavari"
+            required>
 
-        <label for="placeInput">Village / Place</label>
-        <input id="placeInput" name="place"
-               placeholder="Village or town name">
+        <label for="mandalInput">
+            Mandal / Subdistrict
+        </label>
 
-        <label for="market">Market / Mandi (optional)</label>
-        <input id="market" name="market"
-               placeholder="Enter market name if known">
+        <input
+            type="text"
+            id="mandalInput"
+            name="mandal"
+            placeholder="Mandal name (optional)">
 
-        <input type="hidden" id="latitude" name="latitude">
-        <input type="hidden" id="longitude" name="longitude">
+        <label for="placeInput">
+            Village / Place
+        </label>
+
+        <input
+            type="text"
+            id="placeInput"
+            name="place"
+            placeholder="Village or town name">
+
+        <label for="market">
+            Market / Mandi (optional)
+        </label>
+
+        <input
+            type="text"
+            id="market"
+            name="market"
+            placeholder="Example: Your nearby market">
+
+        <input
+            type="hidden"
+            id="latitude"
+            name="latitude">
+
+        <input
+            type="hidden"
+            id="longitude"
+            name="longitude">
 
         <button type="submit" id="searchButton">
             🔍 Find Market Prices
         </button>
+
+        <p class="small">
+            Select the crop and enter the state and district
+            to search available market records.
+        </p>
+
     </form>
 
+    <!-- RESULTS -->
+
     <div class="results">
+
         <h3>📊 Available Market Prices</h3>
 
         {% if error %}
-            <p>{{ error }}</p>
+
+            <div class="error" role="alert">
+                {{ error }}
+            </div>
+
         {% endif %}
 
         {% if prices %}
-            {% if price_date %}
-                <p><strong>Data date:</strong> {{ price_date }}</p>
-            {% endif %}
+
+            <div class="success">
+
+                <strong>Crop:</strong>
+                {{ selected_crop }}
+
+                <br>
+
+                <strong>Location:</strong>
+                {{ selected_district }}, {{ selected_state }}
+
+                {% if market_source %}
+                    <br>
+                    <strong>Source:</strong>
+                    {{ market_source }}
+                {% endif %}
+
+                {% if fetched_at %}
+                    <br>
+                    <strong>Retrieved:</strong>
+                    {{ fetched_at }}
+                {% endif %}
+
+            </div>
 
             <div class="table-wrap">
+
                 <table>
+
                     <thead>
                         <tr>
                             <th>Crop</th>
                             <th>Market</th>
-                            <th>Min Price</th>
-                            <th>Max Price</th>
+                            <th>Minimum Price</th>
+                            <th>Maximum Price</th>
                             <th>Modal Price</th>
-                            <th>Date</th>
+                            <th>Arrival Date</th>
                         </tr>
                     </thead>
+
                     <tbody>
+
                     {% for item in prices %}
+
                         <tr>
-                            <td>{{ item.crop }}</td>
-                            <td>{{ item.market }}</td>
-                            <td>₹{{ item.min_price }}</td>
-                            <td>₹{{ item.max_price }}</td>
-                            <td>₹{{ item.modal_price }}</td>
-                            <td>{{ item.date }}</td>
+
+                            <td>
+                                {{ item.crop or item.commodity or selected_crop }}
+                            </td>
+
+                            <td>
+                                {{ item.market or "Not available" }}
+                            </td>
+
+                            <td class="price">
+                                {% if item.min_price is defined and item.min_price != "" %}
+                                    ₹{{ item.min_price }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </td>
+
+                            <td class="price">
+                                {% if item.max_price is defined and item.max_price != "" %}
+                                    ₹{{ item.max_price }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </td>
+
+                            <td class="price">
+                                {% if item.modal_price is defined and item.modal_price != "" %}
+                                    ₹{{ item.modal_price }}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ item.date or item.arrival_date or "Not available" }}
+                            </td>
+
                         </tr>
+
                     {% endfor %}
+
                     </tbody>
+
                 </table>
+
             </div>
-        {% else %}
-            <p>
-                Market prices will appear here when the server retrieves
-                verified records from a connected data source.
+
+            <p class="small">
+                Verify the arrival date and price units before
+                making a selling decision.
             </p>
+
+        {% else %}
+
+            {% if not error %}
+
+                <div class="empty-state">
+                    <p>
+                        🌱 Select your crop and location, then tap
+                        <strong>Find Market Prices</strong>.
+                    </p>
+
+                    <p>
+                        Available verified market records will appear here
+                        after the server successfully retrieves them.
+                    </p>
+                </div>
+
+            {% endif %}
+
         {% endif %}
+
     </div>
+
+    <!-- INFORMATION -->
 
     <div class="notice">
-        <strong>ℹ️ Important</strong>
+
+        <h3>ℹ️ Important Information</h3>
+
         <p>
-            Prices vary by market, crop variety and quality.
-            Always check the data date before making a selling decision.
+            Market prices vary according to market, crop variety,
+            quality and arrival date.
         </p>
-        <a href="https://www.data.gov.in/"
-           target="_blank" rel="noopener noreferrer">
+
+        <p>
+            The prices shown by this application depend on the
+            records returned by the connected government data source.
+        </p>
+
+        <p>
+            Prices may not be available for every crop or district.
+        </p>
+
+        <a
+            class="source-link"
+            href="https://www.data.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer">
+
             Visit Government Open Data Portal
+
         </a>
+
     </div>
 
-    <a class="back" href="/">← Back to HarvestAI Home</a>
+    <a class="back" href="/">
+        ← Back to HarvestAI Home
+    </a>
+
 </div>
 
 <script>
-    // Filter the crop dropdown by the text entered.
+
+    // ---------------- CROP SEARCH ----------------
+
     const cropSelect = document.getElementById("crop");
-    const originalCropOptions = Array.from(cropSelect.options).map(
-        option => ({
-            value: option.value,
-            text: option.text
-        })
+
+    const originalCropOptions = Array.from(
+        cropSelect.options
+    ).map(option => ({
+        value: option.value,
+        text: option.text
+    }));
+
+    document.getElementById("cropSearch").addEventListener(
+        "input",
+        function () {
+
+            const query = this.value.trim().toLowerCase();
+
+            const currentValue = cropSelect.value;
+
+            cropSelect.innerHTML = "";
+
+            originalCropOptions.forEach(item => {
+
+                if (
+                    !query ||
+                    item.text.toLowerCase().includes(query) ||
+                    item.value.toLowerCase().includes(query)
+                ) {
+
+                    const option = document.createElement("option");
+
+                    option.value = item.value;
+                    option.textContent = item.text;
+
+                    cropSelect.appendChild(option);
+
+                }
+
+            });
+
+            const matchingOption = originalCropOptions.find(
+                item =>
+                    item.value === currentValue &&
+                    (
+                        !query ||
+                        item.text.toLowerCase().includes(query) ||
+                        item.value.toLowerCase().includes(query)
+                    )
+            );
+
+            if (matchingOption) {
+                cropSelect.value = currentValue;
+            }
+
+        }
     );
 
-    document.getElementById("cropSearch").addEventListener("input", function () {
-        const query = this.value.trim().toLowerCase();
-        const currentValue = cropSelect.value;
 
-        cropSelect.innerHTML = "";
-
-        originalCropOptions.forEach(item => {
-            if (!query || item.text.toLowerCase().includes(query)) {
-                const option = document.createElement("option");
-                option.value = item.value;
-                option.textContent = item.text;
-                cropSelect.appendChild(option);
-            }
-        });
-
-        if (originalCropOptions.some(item =>
-            item.value === currentValue &&
-            (!query || item.text.toLowerCase().includes(query))
-        )) {
-            cropSelect.value = currentValue;
-        }
-    });
+    // ---------------- LOCATION DETECTION ----------------
 
     async function detectLocation() {
+
         const status = document.getElementById("locationStatus");
+
         const button = document.getElementById("locationButton");
 
         if (!navigator.geolocation) {
-            status.textContent = "Your browser does not support location detection.";
+
+            status.textContent =
+                "Location detection is not supported by this browser.";
+
             return;
+
         }
 
         button.disabled = true;
-        status.textContent = "Requesting location permission...";
+
+        status.textContent =
+            "Requesting location permission...";
 
         navigator.geolocation.getCurrentPosition(
+
             async function (position) {
+
                 const lat = position.coords.latitude;
+
                 const lon = position.coords.longitude;
 
                 document.getElementById("latitude").value = lat;
+
                 document.getElementById("longitude").value = lon;
 
-                status.textContent = "Coordinates found. Looking up address...";
+                status.textContent =
+                    "Coordinates found. Looking up your address...";
 
                 try {
+
                     const url =
                         "https://nominatim.openstreetmap.org/reverse" +
-                        "?format=jsonv2&lat=" + encodeURIComponent(lat) +
+                        "?format=jsonv2" +
+                        "&lat=" + encodeURIComponent(lat) +
                         "&lon=" + encodeURIComponent(lon) +
                         "&zoom=10&addressdetails=1";
 
                     const response = await fetch(url);
 
                     if (!response.ok) {
-                        throw new Error("Address lookup unavailable");
+                        throw new Error("Address lookup failed");
                     }
 
                     const data = await response.json();
+
                     const address = data.address || {};
 
                     const place =
@@ -409,41 +771,47 @@
                         address.city ||
                         address.hamlet ||
                         address.suburb ||
-                        address.county ||
-                        "Not available";
+                        "";
 
                     const mandal =
                         address.subdistrict ||
                         address.municipality ||
-                        address.county ||
                         "";
 
                     const district =
                         address.state_district ||
                         address.district ||
-                        address.county ||
                         "";
 
                     const state = address.state || "";
 
-                    document.getElementById("place").textContent = place;
-                    document.getElementById("mandal").textContent =
+                    document.getElementById("placeDisplay").textContent =
+                        place || "Not available";
+
+                    document.getElementById("mandalDisplay").textContent =
                         mandal || "Not available";
+
                     document.getElementById("districtDisplay").textContent =
                         district || "Not available";
+
                     document.getElementById("stateDisplay").textContent =
                         state || "Not available";
 
-                    document.getElementById("placeInput").value =
-                        place === "Not available" ? "" : place;
+                    document.getElementById("placeInput").value = place;
 
                     document.getElementById("mandalInput").value = mandal;
+
                     document.getElementById("district").value = district;
 
-                    const stateSelect = document.getElementById("state");
-                    const matchingState = Array.from(stateSelect.options).find(
+                    const stateSelect =
+                        document.getElementById("state");
+
+                    const matchingState = Array.from(
+                        stateSelect.options
+                    ).find(
                         option =>
-                            option.value.toLowerCase() === state.toLowerCase()
+                            option.value.toLowerCase() ===
+                            state.toLowerCase()
                     );
 
                     if (matchingState) {
@@ -451,27 +819,41 @@
                     }
 
                     status.textContent =
-                        "Location detected. Please check the address fields.";
+                        "Location detected. Please verify the address fields.";
+
                 } catch (error) {
+
+                    console.error("LOCATION ERROR:", error);
+
                     status.textContent =
-                        "GPS coordinates found, but the address lookup failed. Enter your location details manually.";
+                        "Coordinates found, but the address lookup failed. Enter your location manually.";
+
                 } finally {
+
                     button.disabled = false;
+
                 }
+
             },
 
             function (error) {
+
                 const messages = {
-                    1: "Location permission was denied. Allow location access or enter your details manually.",
-                    2: "Your location is unavailable. Try again or enter it manually.",
+
+                    1: "Location permission denied. Allow location access or enter details manually.",
+
+                    2: "Your location is unavailable. Please try again.",
+
                     3: "Location request timed out. Please try again."
+
                 };
 
                 status.textContent =
                     messages[error.code] ||
-                    "Could not detect location. Please enter it manually.";
+                    "Could not detect your location. Enter it manually.";
 
                 button.disabled = false;
+
             },
 
             {
@@ -479,9 +861,30 @@
                 timeout: 15000,
                 maximumAge: 300000
             }
+
         );
+
     }
+
+
+    // ---------------- FORM SUBMISSION ----------------
+
+    document.getElementById("priceForm").addEventListener(
+        "submit",
+        function () {
+
+            const button =
+                document.getElementById("searchButton");
+
+            button.disabled = true;
+
+            button.textContent =
+                "⏳ Fetching Market Prices...";
+
+        }
+    );
+
 </script>
+
 </body>
 </html>
-```
